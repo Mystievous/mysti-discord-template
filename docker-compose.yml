@@ -1,0 +1,11 @@
+services:
+  bot:
+    build: 
+      context: ./src/bot
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/bot:/app:cached
+      - '/app/node_modules'
+    env_file:
+      - ./src/bot/envs/.env
+    command: ["yarn", "dev"]
