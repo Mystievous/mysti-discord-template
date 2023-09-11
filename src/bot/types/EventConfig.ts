@@ -1,4 +1,4 @@
-import { ClientExtended } from "app/scripts/ClientExtended"; 
+import { ClientExtended } from "scripts/ClientExtended"; 
 
 export interface EventConfig {
   name: string;

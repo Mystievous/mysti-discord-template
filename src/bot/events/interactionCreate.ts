@@ -1,6 +1,6 @@
 import { Events, Interaction } from "discord.js";
-import { EventConfig } from "app/types/EventConfig";
-import { ClientExtended } from "app/scripts/ClientExtended"
+import { EventConfig } from "types/EventConfig";
+import { ClientExtended } from "scripts/ClientExtended"
 
 export default {
   name: Events.InteractionCreate,

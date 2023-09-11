@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { GatewayIntentBits } from "discord.js";
 
-import { ClientExtended } from "app/scripts/ClientExtended";
-import { EventConfig } from "app/types/EventConfig";
+import { ClientExtended } from "scripts/ClientExtended";
+import { EventConfig } from "types/EventConfig";
 
 const client = new ClientExtended({
   intents: [GatewayIntentBits.Guilds],

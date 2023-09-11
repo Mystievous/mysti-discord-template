@@ -1,4 +1,4 @@
-import { CommandConfig } from "app/types/CommandConfig";
+import { CommandConfig } from "types/CommandConfig";
 import dotenv from 'dotenv';
 import { REST, Routes } from 'discord.js';
 import fs from 'fs'

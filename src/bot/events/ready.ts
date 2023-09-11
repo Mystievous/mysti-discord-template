@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { EventConfig } from "app/types/EventConfig";
+import { EventConfig } from "types/EventConfig";
 
 export default {
   name: Events.ClientReady,
