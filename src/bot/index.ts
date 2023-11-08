@@ -1,22 +1,24 @@
 import fs from "node:fs";
 import path from "node:path";
-import { GatewayIntentBits } from "discord.js";
+import { Collection, GatewayIntentBits } from "discord.js";
 
 import { ClientExtended } from "scripts/ClientExtended";
-import { EventConfig } from "types/EventConfig";
+import { EventConfig } from "types/configs/EventConfig";
+import { ComponentConfig } from "./types/configs/components/ComponentConfig";
 
-const client = new ClientExtended({
-  intents: [GatewayIntentBits.Guilds],
-});
+
+const client = new ClientExtended(
+  {
+    intents: [GatewayIntentBits.Guilds],
+  }
+);
 
 async function init() {
-  const foldersPath = path.join(__dirname, "commands");
-  const commandFolders = fs
-    .readdirSync(foldersPath);
-
+  const commandFoldersPath = path.join(__dirname, "commands");
+  const commandFolders = fs.readdirSync(commandFoldersPath);
 
   for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
+    const commandsPath = path.join(commandFoldersPath, folder);
     const commandFiles = fs
       .readdirSync(commandsPath)
       .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
@@ -30,6 +32,31 @@ async function init() {
       } else {
         console.log(
           `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
+      }
+    }
+  }
+
+  const componentFoldersPath = path.join(__dirname, "components");
+  const componentFolders = fs.readdirSync(componentFoldersPath);
+
+  for (const folder of componentFolders) {
+    const componentsPath = path.join(componentFoldersPath, folder);
+    const componentsFiles = fs
+      .readdirSync(componentsPath) 
+      .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+
+    for (const file of componentsFiles) {
+      const filePath = path.join(componentsPath, file);
+      const component = (await import(filePath)).default;
+      // Set a new item in the Collection with the key as the component name and the value as the exported module
+      if ("type" in component && "id" in component && "builder" in component) {
+        const componentTypeCollection: Collection<string, ComponentConfig> = client.components.get(component.type) ?? new Collection<string, ComponentConfig>();
+        componentTypeCollection.set(component.id, component);
+        client.components.set(component.type, componentTypeCollection);
+      } else {
+        console.log(
+          `[WARNING] The component at ${filePath} is missing a required "type", "id", or "builder" property.`
         );
       }
     }

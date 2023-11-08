@@ -1,0 +1,8 @@
+services:
+  bot:
+    build: 
+      context: ./src/bot
+      dockerfile: Dockerfile
+    image: discord-bot-prod
+    env_file:
+      - ./src/bot/envs/.env

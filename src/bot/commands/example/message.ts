@@ -1,9 +1,9 @@
 import { SlashCommandBuilder, userMention } from "discord.js";
-import { CommandConfig } from "app/types/CommandConfig";
+import { CommandConfig } from "types/configs/CommandConfig";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("example")
+    .setName("message")
     .setDescription(
       "Example Command for the template repository."
     ),

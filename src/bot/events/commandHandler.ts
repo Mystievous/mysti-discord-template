@@ -1,5 +1,5 @@
 import { Events, Interaction } from "discord.js";
-import { EventConfig } from "types/EventConfig";
+import { EventConfig } from "types/configs/EventConfig";
 import { ClientExtended } from "scripts/ClientExtended"
 
 export default {
