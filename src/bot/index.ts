@@ -13,6 +13,12 @@ if (HOST === undefined || PORT === undefined || Number.isNaN(parseInt(PORT)) || 
   throw new Error("Database config is invalid.");
 }
 
+const certPath = path.join(__dirname, "ca-certificate.crt");
+if (!fs.existsSync(certPath)) {
+  console.error("Please put ca-certificate for database in the bot's root folder.")
+  process.exit();
+}
+
 const client = new ClientExtended(
   {
     intents: [GatewayIntentBits.Guilds],
@@ -24,7 +30,7 @@ const client = new ClientExtended(
     user: USERNAME,
     password: PASSWORD,
     ssl: {
-      ca: fs.readFileSync(path.join(__dirname, "ca-certificate.crt")).toString()
+      ca: fs.readFileSync(certPath).toString()
     },
   }
 );
