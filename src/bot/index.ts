@@ -6,10 +6,26 @@ import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
 import { ComponentConfig } from "./types/configs/components/ComponentConfig";
 
+const { HOST, PORT, DATABASE, USERNAME, PASSWORD } = process.env;
+
+
+if (HOST === undefined || PORT === undefined || Number.isNaN(parseInt(PORT)) || DATABASE === undefined || USERNAME === undefined || PASSWORD === undefined) {
+  throw new Error("Database config is invalid.");
+}
 
 const client = new ClientExtended(
   {
     intents: [GatewayIntentBits.Guilds],
+  },
+  {
+    host: HOST,
+    port: parseInt(PORT),
+    database: DATABASE,
+    user: USERNAME,
+    password: PASSWORD,
+    ssl: {
+      ca: fs.readFileSync(path.join(__dirname, "ca-certificate.crt")).toString()
+    },
   }
 );
 
