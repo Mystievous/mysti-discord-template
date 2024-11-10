@@ -1,3 +1,4 @@
+import { addEntry } from "app/scripts/Database";
 import { SlashCommandBuilder, userMention } from "discord.js";
 import { CommandConfig } from "types/configs/CommandConfig";
 
