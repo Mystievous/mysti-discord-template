@@ -1,7 +1,7 @@
 import { Client, Collection, ComponentType } from "discord.js";
 import { CommandConfig } from "types/configs/CommandConfig";
 import { ClientOptions } from "discord.js";
-import { ComponentConfig } from "app/types/configs/components/ComponentConfig";
+import { ComponentConfig } from "app/scripts/ComponentConfig";
 import mysql from 'mysql2/promise';
 
 export class ClientExtended extends Client {

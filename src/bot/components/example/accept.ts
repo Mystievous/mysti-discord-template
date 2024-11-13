@@ -1,22 +1,23 @@
-import { ButtonConfig, ComponentConfig } from "app/types/configs/components/ComponentConfig";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionResponseType, StringSelectMenuBuilder, userMention } from "discord.js";
+import {
+  ButtonConfig,
+} from "app/scripts/ComponentConfig";
+import {
+  ButtonBuilder,
+  ButtonStyle,
+  userMention,
+} from "discord.js";
 
 const id = "accept";
 
-export default {
-  type: ComponentType.Button,
+export default new ButtonConfig(
   id,
-  builder: new ButtonBuilder()
-    .setCustomId(id)
-    .setLabel('Accept')
+  new ButtonBuilder()
+    .setLabel("Accept")
     .setStyle(ButtonStyle.Primary),
-  async execute(client, interaction) {
-    await interaction.reply(
-      {
-        content: `Accepted, ${userMention(interaction.user.id)}`,
-        ephemeral: true
-      }
-    );
-
+  async (client, interaction) => {
+    await interaction.reply({
+      content: `Accepted, ${userMention(interaction.user.id)}`,
+      ephemeral: true,
+    });
   }
-} as ButtonConfig
+);

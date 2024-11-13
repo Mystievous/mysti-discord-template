@@ -4,7 +4,7 @@ import { Collection, GatewayIntentBits } from "discord.js";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
-import { ComponentConfig } from "./types/configs/components/ComponentConfig";
+import { ComponentConfig } from "./scripts/ComponentConfig";
 
 const { HOST, PORT, DATABASE, USERNAME, PASSWORD } = process.env;
 

@@ -7,16 +7,16 @@ import {
   userMention,
 } from "discord.js";
 
-const id = "decline";
+const id = "button-with-data";
 
 export default new ButtonConfig(
   id,
   new ButtonBuilder()
-    .setLabel("Decline")
-    .setStyle(ButtonStyle.Danger),
-  async (client, interaction) => {
-    interaction.reply({
-      content: `Declined, ${userMention(interaction.user.id)}`,
+    .setLabel("Click to show data!")
+    .setStyle(ButtonStyle.Success),
+  async (client, interaction, data) => {
+    await interaction.reply({
+      content: `This button randomly generated: ${data}!`,
       ephemeral: true,
     });
   }

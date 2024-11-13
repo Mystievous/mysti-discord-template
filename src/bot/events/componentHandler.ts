@@ -1,26 +1,27 @@
 import { Events, Interaction } from "discord.js";
 import { EventConfig } from "types/configs/EventConfig";
 import { ClientExtended } from "scripts/ClientExtended"
+import { separateData } from "app/scripts/ComponentConfig";
 
 export default {
   name: Events.InteractionCreate,
-  async execute(client: ClientExtended, interaction: Interaction) {
+  execute(client: ClientExtended, interaction: Interaction) {
     if (!interaction.isMessageComponent()) return;
 
     const type = interaction.componentType;
-    const id = interaction.customId;
-    const component = client.components.get(type)?.get(id);
+    const identifier = separateData(interaction.customId);
+    const component = client.components.get(type)?.get(identifier.id);
 
     if (component === undefined) {
       console.error(
-        `No component matching ${id} was found.`
+        `No component matching ${identifier} was found.`
       );
       return;
     }
 
     try {
       if (component.execute !== undefined) {
-        await component.execute(client, interaction);
+        component.execute(client, interaction, identifier.data);
       }
     } catch (error) {
       console.error(error);
