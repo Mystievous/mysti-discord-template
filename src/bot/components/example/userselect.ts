@@ -5,10 +5,8 @@ import {
   UserSelectMenuBuilder,
 } from "discord.js";
 
-const id = "userselect";
-
 export default new UserSelectConfig(
-  id,
+  "userselect",
   new UserSelectMenuBuilder(),
   async (client, interaction) => {
     const selected = interaction.values[0];

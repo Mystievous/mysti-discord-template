@@ -7,10 +7,8 @@ import {
   userMention,
 } from "discord.js";
 
-const id = "decline";
-
 export default new ButtonConfig(
-  id,
+  "decline",
   new ButtonBuilder()
     .setLabel("Decline")
     .setStyle(ButtonStyle.Danger),

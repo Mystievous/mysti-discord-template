@@ -7,10 +7,8 @@ import {
   userMention,
 } from "discord.js";
 
-const id = "accept";
-
 export default new ButtonConfig(
-  id,
+  "accept",
   new ButtonBuilder()
     .setLabel("Accept")
     .setStyle(ButtonStyle.Primary),

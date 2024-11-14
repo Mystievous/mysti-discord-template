@@ -4,10 +4,8 @@ import {
   StringSelectMenuOptionBuilder,
 } from "discord.js";
 
-const id = "stringselect";
-
 export default new StringSelectConfig(
-  id,
+  "stringselect",
   new StringSelectMenuBuilder().addOptions([
     new StringSelectMenuOptionBuilder({
       label: "Option 1",
