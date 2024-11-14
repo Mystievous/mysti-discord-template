@@ -12,12 +12,10 @@
   "dependencies": {
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
-    "mysql2": "^3.11.4",
-    "pg": "^8.11.3"
+    "mysql2": "^3.11.4"
   },
   "devDependencies": {
     "@types/node": "^18.18.7",
-    "@types/pg": "^8.10.9",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
