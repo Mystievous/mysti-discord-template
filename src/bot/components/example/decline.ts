@@ -13,7 +13,7 @@ export default new ButtonConfig(
     .setLabel("Decline")
     .setStyle(ButtonStyle.Danger),
   async (client, interaction) => {
-    interaction.reply({
+    await interaction.reply({
       content: `Declined, ${userMention(interaction.user.id)}`,
       ephemeral: true,
     });

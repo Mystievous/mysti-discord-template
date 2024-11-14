@@ -10,7 +10,7 @@ export default new UserSelectConfig(
   new UserSelectMenuBuilder(),
   async (client, interaction) => {
     const selected = interaction.values[0];
-    interaction.reply({
+    await interaction.reply({
       content: `Selected: ${selected}`,
       ephemeral: true,
     });

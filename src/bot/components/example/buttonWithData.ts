@@ -4,7 +4,6 @@ import {
 import {
   ButtonBuilder,
   ButtonStyle,
-  userMention,
 } from "discord.js";
 
 export default new ButtonConfig(
