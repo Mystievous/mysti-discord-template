@@ -22,5 +22,4 @@ export async function addEntry(client: ClientExtended, entry: EntryDB) {
       throw e;
     }
   }
-
 }

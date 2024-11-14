@@ -15,13 +15,11 @@ export default {
     ),
   async execute(client, interaction) {
     try {
-        const name = (interaction.options as any).getString("name", true);
-        await addEntry(client, { name: name });
-        return await interaction.reply(
-            `${name} inserted into the database.`
-        )
+      const name = (interaction.options as any).getString("name", true);
+      await addEntry(client, { name: name });
+      return await interaction.reply(`${name} inserted into the database.`);
     } catch (e: any) {
-        return await interaction.reply(`Error: ${e.message}`)
+      return await interaction.reply(`Error: ${e.message}`);
     }
   },
 } as CommandConfig;
