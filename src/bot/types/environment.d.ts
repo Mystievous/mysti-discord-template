@@ -5,10 +5,11 @@ declare global {
         TOKEN: string
         CLIENT_ID: string
         GUILD_ID: string
-        DB_HOST: string
-        DB_DATABASE: string
-        DB_USER: string
-        DB_PASSWORD: string
+        HOST: string
+        PORT: string
+        DATABASE: string
+        USER: string
+        PASSWORD: string
       }
     }
   }
