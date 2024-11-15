@@ -1,6 +1,6 @@
 import { addEntry } from "app/scripts/Database";
 import { SlashCommandBuilder } from "discord.js";
-import { CommandConfig } from "types/configs/CommandConfig";
+import { SlashCommandConfig } from "types/configs/CommandConfig";
 
 export default {
   data: new SlashCommandBuilder()
@@ -22,4 +22,4 @@ export default {
       return await interaction.reply(`Error: ${e.message}`);
     }
   },
-} as CommandConfig;
+} as SlashCommandConfig;

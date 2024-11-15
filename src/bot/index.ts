@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Collection, GatewayIntentBits } from "discord.js";
+import {
+  Collection,
+  ContextMenuCommandBuilder,
+  GatewayIntentBits,
+  SlashCommandBuilder
+} from "discord.js";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
@@ -8,8 +13,14 @@ import { ComponentConfig } from "./scripts/ComponentConfig";
 
 const { HOST, PORT, DATABASE, USERNAME, PASSWORD } = process.env;
 
-
-if (HOST === undefined || PORT === undefined || Number.isNaN(parseInt(PORT)) || DATABASE === undefined || USERNAME === undefined || PASSWORD === undefined) {
+if (
+  HOST === undefined ||
+  PORT === undefined ||
+  Number.isNaN(parseInt(PORT)) ||
+  DATABASE === undefined ||
+  USERNAME === undefined ||
+  PASSWORD === undefined
+) {
   throw new Error("Database config is invalid.");
 }
 
@@ -22,7 +33,7 @@ const client = new ClientExtended(
     port: parseInt(PORT),
     database: DATABASE,
     user: USERNAME,
-    password: PASSWORD
+    password: PASSWORD,
   }
 );
 
@@ -41,7 +52,11 @@ async function init() {
       const command = (await import(filePath)).default;
       // Set a new item in the Collection with the key as the command name and the value as the exported module
       if ("data" in command && "execute" in command) {
-        client.commands.set(command.data.name, command);
+        if (command.data instanceof SlashCommandBuilder) {
+          client.slashCommands.set(command.data.name, command);
+        } else if (command.data instanceof ContextMenuCommandBuilder) {
+          client.contextMenuCommands.set(command.data.name, command);
+        }
       } else {
         console.log(
           `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
@@ -56,7 +71,7 @@ async function init() {
   for (const folder of componentFolders) {
     const componentsPath = path.join(componentFoldersPath, folder);
     const componentsFiles = fs
-      .readdirSync(componentsPath) 
+      .readdirSync(componentsPath)
       .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 
     for (const file of componentsFiles) {
@@ -64,7 +79,9 @@ async function init() {
       const component = (await import(filePath)).default;
       // Set a new item in the Collection with the key as the component name and the value as the exported module
       if ("type" in component && "id" in component && "builder" in component) {
-        const componentTypeCollection: Collection<string, ComponentConfig> = client.components.get(component.type) ?? new Collection<string, ComponentConfig>();
+        const componentTypeCollection: Collection<string, ComponentConfig> =
+          client.components.get(component.type) ??
+          new Collection<string, ComponentConfig>();
         componentTypeCollection.set(component.id, component);
         client.components.set(component.type, componentTypeCollection);
       } else {

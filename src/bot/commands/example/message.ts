@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, userMention } from "discord.js";
-import { CommandConfig } from "types/configs/CommandConfig";
+import { SlashCommandConfig } from "types/configs/CommandConfig";
 
 export default {
   data: new SlashCommandBuilder()
@@ -10,4 +10,4 @@ export default {
       `Hello, ${userMention(interaction.user.id)}`
     );
   },
-} as CommandConfig;
+} as SlashCommandConfig;

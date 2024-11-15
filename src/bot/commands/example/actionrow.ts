@@ -11,7 +11,7 @@ import {
   StringSelectMenuBuilder,
   UserSelectMenuBuilder,
 } from "discord.js";
-import { CommandConfig } from "types/configs/CommandConfig";
+import { SlashCommandConfig } from "types/configs/CommandConfig";
 
 export default {
   data: new SlashCommandBuilder()
@@ -39,4 +39,4 @@ export default {
       components: [buttonRow, stringSelectRow, userSelectRow],
     });
   },
-} as CommandConfig;
+} as SlashCommandConfig;

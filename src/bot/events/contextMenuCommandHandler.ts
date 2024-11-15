@@ -5,9 +5,9 @@ import { ClientExtended } from "scripts/ClientExtended"
 export default {
   name: Events.InteractionCreate,
   async execute(client: ClientExtended, interaction: Interaction) {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isContextMenuCommand()) return;
     
-    const command = client.commands.get(interaction.commandName);
+    const command = client.contextMenuCommands.get(interaction.commandName);
 
     if (!command) {
       console.error(
@@ -17,7 +17,7 @@ export default {
     }
 
     try {
-      await command.execute(client, interaction);
+      await command.execute(client, interaction as any);
     } catch (error) {
       console.error(error);
       await interaction.reply({
