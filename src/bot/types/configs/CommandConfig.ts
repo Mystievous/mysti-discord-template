@@ -8,6 +8,7 @@ import {
 import { ClientExtended } from "scripts/ClientExtended";
 
 export interface SlashCommandConfig {
+  global?: boolean;
   data:
     | SlashCommandBuilder
     | SlashCommandOptionsOnlyBuilder
@@ -19,6 +20,7 @@ export interface SlashCommandConfig {
 }
 
 export interface ContextMenuCommandConfig {
+  global?: boolean;
   data: ContextMenuCommandBuilder;
   execute: (
     client: ClientExtended,

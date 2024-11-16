@@ -17,6 +17,7 @@ if (!token || !clientId || !guildId ) {
 }
 
 const commands: {[guildId: string]: any[]} = {};
+const globalCommands: any[] = [];
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath)
@@ -33,7 +34,11 @@ for (const folder of commandFolders) {
   for (const file of commandFiles) {
     const commandPath = path.join(commandsPath, file);
     const command: CommandConfig = require(commandPath).default;
-    commands[guildId].push(command.data.toJSON());
+    if (command.global) {
+      globalCommands.push(command.data.toJSON());
+    } else {
+      commands[guildId].push(command.data.toJSON());
+    }
     count++;
   }
 }
@@ -58,6 +63,13 @@ const rest = new REST({
         },
       ); 
     }
+
+    await rest.put(
+      Routes.applicationCommands(clientId),
+      {
+        body: globalCommands
+      },
+    );
 
     console.log(`Successfully reloaded application (/) commands.`);
   } catch(error) {
