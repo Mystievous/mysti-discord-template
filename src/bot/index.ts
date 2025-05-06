@@ -6,10 +6,15 @@ import {
   GatewayIntentBits,
   SlashCommandBuilder
 } from "discord.js";
+import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
 import { ComponentConfig } from "./scripts/ComponentConfig";
+
+dotenv.config({
+  path: "./envs/.env"
+})
 
 const { HOST, PORT, DATABASE, USERNAME, PASSWORD } = process.env;
 

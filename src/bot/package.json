@@ -5,8 +5,8 @@
   "author": "Mystievous",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register index.ts",
-    "dev": "ts-node-dev -r tsconfig-paths/register index.ts",
+    "start": "ts-node -r tsconfig-paths/register ./index.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register ./index.ts",
     "deploy-commands": "ts-node -r tsconfig-paths/register deploy-commands.ts"
   },
   "dependencies": {

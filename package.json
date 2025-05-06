@@ -1,0 +1,10 @@
+{
+  "packageManager": "yarn@4.9.1",
+  "private": true,
+  "workspaces": [
+    "src/bot"
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
