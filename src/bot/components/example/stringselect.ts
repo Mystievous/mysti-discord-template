@@ -1,5 +1,6 @@
 import { StringSelectConfig } from "app/scripts/ComponentConfig";
 import {
+  MessageFlags,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js";
@@ -24,7 +25,7 @@ export default new StringSelectConfig(
     const selected = interaction.values[0];
     await interaction.reply({
       content: `Selected: ${selected}`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral
     });
   }
 );

@@ -1,4 +1,4 @@
-import { Events, Interaction } from "discord.js";
+import { Events, Interaction, MessageFlags } from "discord.js";
 import { EventConfig } from "types/configs/EventConfig";
 import { ClientExtended } from "scripts/ClientExtended"
 
@@ -22,7 +22,7 @@ export default {
       console.error(error);
       await interaction.reply({
         content: "There was an error while executing this command!",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }, 

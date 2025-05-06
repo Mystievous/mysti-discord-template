@@ -2,6 +2,7 @@ import {
   UserSelectConfig,
 } from "app/scripts/ComponentConfig";
 import {
+  MessageFlags,
   UserSelectMenuBuilder,
 } from "discord.js";
 
@@ -12,7 +13,7 @@ export default new UserSelectConfig(
     const selected = interaction.values[0];
     await interaction.reply({
       content: `Selected: ${selected}`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral
     });
   }
 );

@@ -4,6 +4,7 @@ import {
 import {
   ButtonBuilder,
   ButtonStyle,
+  MessageFlags,
   userMention,
 } from "discord.js";
 
@@ -15,7 +16,7 @@ export default new ButtonConfig(
   async (client, interaction) => {
     await interaction.reply({
       content: `Declined, ${userMention(interaction.user.id)}`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral
     });
   }
 );

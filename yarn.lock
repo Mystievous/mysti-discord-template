@@ -1140,9 +1140,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mystibot@workspace:.":
+"mystibot@workspace:src/bot":
   version: 0.0.0-use.local
-  resolution: "mystibot@workspace:."
+  resolution: "mystibot@workspace:src/bot"
   dependencies:
     "@types/node": "npm:^22.15.11"
     discord.js: "npm:^14.19.3"
@@ -1346,6 +1346,14 @@ __metadata:
   checksum: 10c0/4eef73d406c6940927479a3a9dee551e14a54faf54b31ef861250ac815172bade86cc6f7d64a4dc5e98b65e4b18a2e1c9ff3b68d296be0c748413f092bb0dd40
   languageName: node
   linkType: hard
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  dependencies:
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
 
 "safer-buffer@npm:>= 2.1.2 < 3.0.0":
   version: 2.1.2
