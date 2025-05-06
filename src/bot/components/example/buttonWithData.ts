@@ -4,6 +4,7 @@ import {
 import {
   ButtonBuilder,
   ButtonStyle,
+  MessageFlags,
 } from "discord.js";
 
 export default new ButtonConfig(
@@ -14,7 +15,7 @@ export default new ButtonConfig(
   async (client, interaction, data) => {
     await interaction.reply({
       content: `This button randomly generated: ${data}!`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral
     });
   }
 );

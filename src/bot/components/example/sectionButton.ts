@@ -9,13 +9,13 @@ import {
 } from "discord.js";
 
 export default new ButtonConfig(
-  "accept",
+  "section",
   new ButtonBuilder()
-    .setLabel("Accept")
+    .setLabel("Section Button")
     .setStyle(ButtonStyle.Primary),
   async (client, interaction) => {
     await interaction.reply({
-      content: `Accepted, ${userMention(interaction.user.id)}`,
+      content: `You clicked the section button, ${userMention(interaction.user.id)}`,
       flags: MessageFlags.Ephemeral
     });
   }

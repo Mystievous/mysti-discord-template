@@ -7,8 +7,12 @@ import { randomUUID } from "crypto";
 import {
   ActionRowBuilder,
   ButtonBuilder,
+  MessageFlags,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
+  TextDisplayBuilder,
   UserSelectMenuBuilder,
 } from "discord.js";
 import { SlashCommandConfig } from "types/configs/CommandConfig";
@@ -20,11 +24,18 @@ export default {
       "Example Command with actionrows for the template repository."
     ),
   async execute(client, interaction) {
+    const buttonLabel = new TextDisplayBuilder().setContent("Buttons:");
+
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
       accept.getBuilder(),
       decline.getBuilder(),
       buttonWithData.getBuilder(randomUUID())
     );
+
+    const separator = new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large);
+
+    const selectLabel = new TextDisplayBuilder().setContent("Select:");
+
     const stringSelectRow =
       new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
         stringselect.getBuilder()
@@ -35,8 +46,15 @@ export default {
       );
 
     await interaction.reply({
-      content: `Actionrows`,
-      components: [buttonRow, stringSelectRow, userSelectRow],
+      flags: MessageFlags.IsComponentsV2,
+      components: [
+        buttonLabel,
+        buttonRow, 
+        separator,
+        selectLabel,
+        stringSelectRow, 
+        userSelectRow
+      ],
     });
   },
 } as SlashCommandConfig;
