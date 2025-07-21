@@ -1,4 +1,4 @@
-.env*
+.env
 
 .yarn/*
 !.yarn/patches
@@ -14,5 +14,15 @@
 #!.yarn/cache
 .pnp.*
 
+# Python Environments
+.venv
+
+
 # Nix
 .direnv
+
+
+# Database
+*.db
+*.sqlite
+*.sqlite3

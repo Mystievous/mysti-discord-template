@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  ClientOptions,
   Collection,
   ContextMenuCommandBuilder,
   GatewayIntentBits,
@@ -11,35 +12,29 @@ import dotenv from "dotenv";
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
 import { ComponentConfig } from "./scripts/ComponentConfig";
+import axios, { CreateAxiosDefaults } from "axios";
 
 dotenv.config({
   path: "./envs/.env"
 })
 
-const { HOST, PORT, DATABASE, USERNAME, PASSWORD } = process.env;
+const { API_URL } = process.env;
 
-if (
-  HOST === undefined ||
-  PORT === undefined ||
-  Number.isNaN(parseInt(PORT)) ||
-  DATABASE === undefined ||
-  USERNAME === undefined ||
-  PASSWORD === undefined
-) {
-  throw new Error("Database config is invalid.");
+if (!API_URL) {
+  throw new Error("API config is invalid.");
+}
+
+const discordClientOptions: ClientOptions = {
+  intents: [GatewayIntentBits.Guilds]
+}
+
+const axiosOptions: CreateAxiosDefaults = {
+  baseURL: API_URL,
 }
 
 const client = new ClientExtended(
-  {
-    intents: [GatewayIntentBits.Guilds],
-  },
-  {
-    host: HOST,
-    port: parseInt(PORT),
-    database: DATABASE,
-    user: USERNAME,
-    password: PASSWORD,
-  }
+  discordClientOptions,
+  axiosOptions
 );
 
 async function init() {

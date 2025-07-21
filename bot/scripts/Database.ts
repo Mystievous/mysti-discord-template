@@ -1,25 +1,23 @@
 import { ClientExtended } from "./ClientExtended";
 
-export interface EntryDB {
+// Models from /api/db/models.py
+export interface Entry {
   name: string;
 }
 
-export async function addEntry(client: ClientExtended, entry: EntryDB) {
-  if (!client.database) {
-    throw new Error("Database is not connected");
-  }
-  
-  const db = client.database;
-  const query = "INSERT INTO entries (name) VALUES (?)";
-  const params = [entry.name];
+export interface EntryPublic extends Entry {
+  id: number;
+}
 
-  try {
-    await db.execute(query, params);
-  } catch (e: any) {
-    if (e.code === "ER_DUP_ENTRY") {
-      throw new Error("Entry already exists");
-    } else {
-      throw e;
-    }
-  }
+export async function addEntry(
+  client: ClientExtended,
+  entry: Entry
+): Promise<EntryPublic> {
+  // Endpoint defined in /api/db/main.py
+  const { data } = await client.api.put<EntryPublic>(
+    "/entry",
+    {},
+    { params: entry }
+  );
+  return data;
 }

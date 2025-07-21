@@ -14,12 +14,14 @@ export default {
         .setRequired(true)
     ),
   async execute(client, interaction) {
+    await interaction.deferReply();
     try {
       const name = (interaction.options as any).getString("name", true);
       await addEntry(client, { name: name });
-      return await interaction.reply(`${name} inserted into the database.`);
+      await interaction.editReply(`"${name}" inserted into the database.`);
     } catch (e: any) {
-      return await interaction.reply(`Error: ${e.message}`);
+      console.error(e);
+      await interaction.editReply(`Error: ${e.message}`);
     }
   },
 } as SlashCommandConfig;

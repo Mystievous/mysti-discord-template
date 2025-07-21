@@ -4,12 +4,19 @@
 This template uses [Discord.js](https://discord.js.org/) to assemble a discord bot.
 
 ## Usage
+Running the bot:
 1. Make sure you have node installed, with corepack enabled.
 On windows, it is additionally recommended to use WSL 2 instead of using windows directly.
 2. Create and clone a new repository using this template.
 3. Navigate to `./bot`, and run `yarn install` to install the required node modules.
 4. Configure the environment variables in `./bot/envs/` as described in `./bot/envs/template.env`.
 5. run `yarn run dev` to build and run the container in dev mode.
+
+To use API features such as a database connection, you must also run the python API.  
+Included in the repo is a basic python project using [FastAPI](https://fastapi.tiangolo.com/) and [SQLModel](https://sqlmodel.tiangolo.com/).  
+The example command can be found in `./bot/commands/example/database.ts`
+
+You can run the API in development mode by installing the packages from `./api/requirements.txt`, and running `fastapi dev --port <Port>` where the port should make it match the api url you put in your `.env` file.
 
 ## Commands
 Slash commands can be created in *a subfolder* of the `./bot/commands/` folder. There are example commands already provided in `./bot/commands/example/`.
