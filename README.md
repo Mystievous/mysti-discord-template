@@ -1,20 +1,18 @@
 # Mystievous' Discord Bot Template
 
 ## Info
-This template uses [Discord.js](https://discord.js.org/) to assemble a discord bot, to then be run through Docker.
-
-To run this without docker, it will require the environment variables from `envs`, or use the `.env` file directly in `index.ts` with a node package like `dotenv`.
+This template uses [Discord.js](https://discord.js.org/) to assemble a discord bot.
 
 ## Usage
-1. Make sure that you have [docker](https://www.docker.com/) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) installed.  
-On windows, it is recommended to use WSL 2 instead of using windows directly.
+1. Make sure you have node installed, with corepack enabled.
+On windows, it is additionally recommended to use WSL 2 instead of using windows directly.
 2. Create and clone a new repository using this template.
-3. Navigate to `./src/bot`, and run `yarn install` to install the required node modules.
-4. Configure the environment variables in `./envs/` as described in `./envs/template.env`
-5. run `docker compose up --build` to build and run the container
+3. Navigate to `./bot`, and run `yarn install` to install the required node modules.
+4. Configure the environment variables in `./bot/envs/` as described in `./bot/envs/template.env`.
+5. run `yarn run dev` to build and run the container in dev mode.
 
 ## Commands
-Slash commands can be created in *a subfolder* of the `./commands/` folder. There are example commands already provided in `./commands/example/`.
+Slash commands can be created in *a subfolder* of the `./bot/commands/` folder. There are example commands already provided in `./bot/commands/example/`.
 
 ```ts
 export default {
@@ -26,21 +24,20 @@ export default {
       `Hello, ${userMention(interaction.user.id)}`
     );
   },
-} as CommandConfig;
+} as SlashCommandConfig;
 ```
 
-They must be of the type `CommandConfig` which has the following properties:
-- `data`: The `SlashCommandBuilder` that describes the command. You also define any user inputs through this builder.
+They must be one of the `CommandConfig` types which have the following properties:
+- `global`: A flag marking whether the command should be added globally, otherwise it will be registered only to the individual guild from `./bot/envs/.env`
+- `data`: The `CommandBuilder` that describes the command. You also define any user inputs through this builder.
 - `execute`: The function to execute when this command is run by a user. This has additional parameters that are passed in:
   - `client`: The current `ClientExtended` of the bot. This includes the normal information, along with the database connection.
-  - `interaction`: The object describing the command usage. This will include the user's id `interaction.user.id`.
+  - `interaction`: The object describing the command usage. This will include the user's id in `interaction.user.id`.
 
-Once configured and added to a subfolder of `./commands/`, you must run `yarn deploy-commands` to deploy the commands **to the server/guild defined in your `.env` through `GUILD_ID`**.
-
-I have not currently added a way to do global commands.
+Once configured and added to a subfolder of `./bot/commands/`, you must run `yarn deploy-commands` to deploy the commands **(Non-global commands are only deployed to the server/guild defined in your `.env` through `GUILD_ID`**.
 
 ## Components (i.e. Buttons, Selects)
-Components can be created in *a subfolder* of the `./components/` folder. There are example components already provided in `./components/example/`, as well as a usage example in `./commands/example/actionrow.ts`.
+Components can be created in *a subfolder* of the `./bot/components/` folder. There are example components already provided in `./bot/components/example/`, as well as a usage example in `./bot/commands/example/actionrow.ts`.
 
 ```ts
 export default new ButtonConfig(
@@ -51,7 +48,7 @@ export default new ButtonConfig(
   async (client, interaction) => {
     await interaction.reply({
       content: `Accepted, ${userMention(interaction.user.id)}`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral
     });
   }
 );
@@ -76,7 +73,8 @@ For further usage with custom data, see below.
 ### Dynamic Component Data
 In many situations, you may wish to have a component created by the bot that has an assigned "label", to identify it.
 
-For instance, imagine you have a command where users can submit images, and you want buttons where other users could like them, and have that synced to the database. It won't cut it to just have all the component ids be `like`!  
+For instance, imagine you have a command where users can submit images, and you want buttons where other users could like them, and have that synced to the database, without using reactions. 
+It might not cut it to just have all the component ids be set to `like`, as that would cause the interactions to look the same!
 In this case, you could give each one custom data that corresponds to the database Row ID of the image it's attached to. 
 
 Behind the scenes, this concatenates the regular ID of the button with the custom data with a semicolon between. 

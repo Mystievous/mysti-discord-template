@@ -1,6 +1,6 @@
 import { Events, Interaction } from "discord.js";
 import { EventConfig } from "types/configs/EventConfig";
-import { ClientExtended } from "scripts/ClientExtended"
+import { ClientExtended } from "scripts/ClientExtended";
 import { separateData } from "app/scripts/ComponentConfig";
 
 export default {
@@ -13,9 +13,7 @@ export default {
     const component = client.components.get(type)?.get(identifier.id);
 
     if (component === undefined) {
-      console.error(
-        `No component matching ${identifier} was found.`
-      );
+      console.error(`No component matching ${identifier} was found.`);
       return;
     }
 
@@ -26,6 +24,5 @@ export default {
     } catch (error) {
       console.error(error);
     }
-
-  }, 
+  },
 } as EventConfig;
