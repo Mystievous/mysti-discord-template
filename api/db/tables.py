@@ -1,4 +1,4 @@
-from sqlalchemy import PrimaryKeyConstraint
+from sqlalchemy import PrimaryKeyConstraint, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -13,3 +13,4 @@ class Entry(BaseTable):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(45), nullable=False)

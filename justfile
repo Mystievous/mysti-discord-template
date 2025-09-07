@@ -1,11 +1,11 @@
 list:
     just --list
 
-bot-dev:
+dev-bot:
     cd bot && yarn dev
 
-api-dev:
+dev-api:
     cd api && fastapi dev
 
 [parallel]
-dev: bot-dev api-dev
+dev: dev-bot dev-api
