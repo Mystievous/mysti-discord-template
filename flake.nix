@@ -86,18 +86,14 @@
               )
 
               nodejs
-
-              # Alternatively, you can use a specific major version of Node.js
-              # nodejs-22_x
-
-              # Use corepack to install npm/pnpm/yarn as specified in package.json
               corepack
+              yarn
 
               # Required to enable the language server
               nodePackages.typescript
               nodePackages.typescript-language-server
 
-              yarn
+              just
             ];
           };
         }

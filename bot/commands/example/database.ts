@@ -1,4 +1,4 @@
-import { addEntry } from "app/scripts/Database";
+import { createEntry } from "app/scripts/api/entries/controller";
 import { SlashCommandBuilder } from "discord.js";
 import { SlashCommandConfig } from "types/configs/CommandConfig";
 
@@ -17,8 +17,8 @@ export default {
     await interaction.deferReply();
     try {
       const name = (interaction.options as any).getString("name", true);
-      await addEntry(client, { name: name });
-      await interaction.editReply(`"${name}" inserted into the database.`);
+      const newEntry = await createEntry({ name });
+      await interaction.editReply(`"${newEntry.name}" (${newEntry.id}) inserted into the database.`);
     } catch (e: any) {
       console.error(e);
       await interaction.editReply(`Error: ${e.message}`);

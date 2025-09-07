@@ -3,3 +3,4 @@ fastapi-utils==0.8.0
 pydantic-settings==2.10.1
 typing-inspect==0.9.0
 sqlalchemy==2.0.43
+alembic==1.16.5

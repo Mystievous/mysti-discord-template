@@ -25,10 +25,6 @@ settings = DatabaseSettings()  # type: ignore
 engine = create_engine(settings.database_uri, echo=True)
 
 
-def create_db_and_tables():
-    BaseTable.metadata.create_all(engine)
-
-
 def get_session():
     with Session(engine) as session:
         yield session

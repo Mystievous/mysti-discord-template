@@ -1,0 +1,15 @@
+# Lists all available commands
+list:
+    just --list
+
+# Starts the bot in development mode
+dev:
+    yarn dev
+
+# Starts the bot
+start:
+    yarn start
+
+# Deploys bot commands
+deploy:
+    yarn deploy-commands

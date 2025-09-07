@@ -20,3 +20,7 @@ class EntryPublic(EntryBase):
 # but it's defined separately for clarity and future extensibility
 class EntryCreate(EntryBase):
     pass
+
+
+class EntryUpdate(EntryBase):
+    pass

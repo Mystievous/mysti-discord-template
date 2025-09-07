@@ -1,11 +1,17 @@
+# The Discord bot
+mod bot
+
+# The FastAPI backend
+mod api
+
+# Shows all available commands
 list:
     just --list
 
-dev-bot:
-    cd bot && yarn dev
-
-dev-api:
-    cd api && fastapi dev
-
+# Starts both the bot and the API in development mode
 [parallel]
-dev: dev-bot dev-api
+dev: bot::dev api::dev
+
+# Starts both the bot and the API
+[parallel]
+start: bot::start api::start

@@ -3,25 +3,20 @@ from contextlib import asynccontextmanager
 import dotenv
 from fastapi import FastAPI
 
-from areas.entries.models import EntryCreate, EntryPublic
 from core.router import router
-from db.tables import Entry
-from db.connection import create_db_and_tables, DatabaseDependency
 
 dotenv.load_dotenv("envs/.env")
 
 
+# Define FastAPI app with lifespan events
+# This is where you can add startup and shutdown events if needed
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # startup
 
-    # Automatically create the database and tables
-    # from any model that inherits from SQLModel
-    create_db_and_tables()
-
     yield
-
     # shutdown
+
     pass
 
 

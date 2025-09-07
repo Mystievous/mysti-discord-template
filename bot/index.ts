@@ -12,29 +12,17 @@ import dotenv from "dotenv";
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
 import { ComponentConfig } from "./scripts/ComponentConfig";
-import axios, { CreateAxiosDefaults } from "axios";
 
 dotenv.config({
   path: "./envs/.env"
 })
 
-const { API_URL } = process.env;
-
-if (!API_URL) {
-  throw new Error("API config is invalid.");
-}
-
 const discordClientOptions: ClientOptions = {
   intents: [GatewayIntentBits.Guilds]
 }
 
-const axiosOptions: CreateAxiosDefaults = {
-  baseURL: API_URL,
-}
-
 const client = new ClientExtended(
-  discordClientOptions,
-  axiosOptions
+  discordClientOptions
 );
 
 async function init() {

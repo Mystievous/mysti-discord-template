@@ -17,10 +17,8 @@ export class ClientExtended extends Client {
     ComponentType,
     Collection<string, ComponentConfig>
   >();
-  api: AxiosInstance;
 
-  constructor(options: ClientOptions, apiOptions: CreateAxiosDefaults) {
+  constructor(options: ClientOptions) {
     super(options);
-    this.api = axios.create(apiOptions);
   }
 }
