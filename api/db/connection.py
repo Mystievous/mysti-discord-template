@@ -3,7 +3,11 @@ from typing import Annotated
 
 from dotenv import dotenv_values
 from fastapi import Depends
-from sqlmodel import create_engine, Session, SQLModel
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+from db.tables import BaseTable
 
 logger = logging.getLogger(__name__)
 
@@ -14,10 +18,11 @@ uri = values.get("DATABASE_URI")
 if not uri:
     raise ValueError("DATABASE_URI not found in environment variables")
 
-engine = create_engine(values.get("DATABASE_URI"), echo=True) # type: ignore
+engine = create_engine(values.get("DATABASE_URI"), echo=True)  # type: ignore
+
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    BaseTable.metadata.create_all(engine)
 
 
 def get_session():
@@ -25,4 +30,4 @@ def get_session():
         yield session
 
 
-SessionDep = Annotated[Session, Depends(get_session)]
+DatabaseDependency = Annotated[Session, Depends(get_session)]
