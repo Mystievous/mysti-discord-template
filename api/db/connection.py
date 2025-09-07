@@ -1,23 +1,28 @@
 import logging
 from typing import Annotated
 
-from dotenv import dotenv_values
 from fastapi import Depends
-from sqlmodel import create_engine, Session, SQLModel
+from pydantic_settings import BaseSettings
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+from db.tables import BaseTable
 
 logger = logging.getLogger(__name__)
 
-values = dotenv_values("envs/.env")
 
-uri = values.get("DATABASE_URI")
+class DatabaseSettings(BaseSettings):
+    database_uri: str
 
-if not uri:
-    raise ValueError("DATABASE_URI not found in environment variables")
+    class Config:
+        env_file = "envs/.env"
+        env_file_encoding = "utf-8"
 
-engine = create_engine(values.get("DATABASE_URI"), echo=True) # type: ignore
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+settings = DatabaseSettings()  # type: ignore
+
+engine = create_engine(settings.database_uri, echo=True)
 
 
 def get_session():
@@ -25,4 +30,4 @@ def get_session():
         yield session
 
 
-SessionDep = Annotated[Session, Depends(get_session)]
+DatabaseDependency = Annotated[Session, Depends(get_session)]

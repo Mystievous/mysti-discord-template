@@ -1,0 +1,24 @@
+# Lists all available commands
+list:
+    just --list
+
+# Starts the API in development mode
+dev:
+    fastapi dev
+
+# Starts the API
+start:
+    fastapi start
+
+
+# Creates a new Alembic migration revision
+revise *message:
+    alembic revision --autogenerate -m "{{message}}"
+
+# Applies Alembic migrations
+migrate:
+    alembic upgrade head
+
+# Rolls back the last Alembic migration
+rollback:
+    alembic downgrade -1
