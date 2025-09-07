@@ -8,7 +8,7 @@ dev:
 
 # Starts the API
 start:
-    fastapi start
+    fastapi run
 
 
 # Creates a new Alembic migration revision
