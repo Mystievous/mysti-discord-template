@@ -1,12 +1,12 @@
-# The Discord bot
 mod bot
-
-# The FastAPI backend
 mod api
 
 # Shows all available commands
 list:
     just --list
+
+# Generate API schema and typescript code
+generate-api-client: api::generate-openapi
 
 # Install pip and yarn dependencies
 install: bot::install api::install
