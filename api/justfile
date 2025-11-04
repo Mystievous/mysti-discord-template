@@ -2,6 +2,10 @@
 list:
     just --list
 
+# Installs pip requirements
+install:
+    pip install -r requirements.txt
+
 # Starts the API in development mode
 dev:
     fastapi dev

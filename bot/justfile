@@ -2,6 +2,10 @@
 list:
     just --list
 
+# Install node libraries
+install:
+    yarn install
+
 # Starts the bot in development mode
 dev:
     yarn dev

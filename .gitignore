@@ -17,13 +17,19 @@
 # Python Environments
 .venv
 
-
-# Nix
-.direnv
-!.envrc
-
-
 # Database
 *.db
 *.sqlite
 *.sqlite3
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+!.envrc
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
