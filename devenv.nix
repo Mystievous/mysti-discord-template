@@ -12,10 +12,9 @@
   languages.javascript = {
     enable = true;
     directory = "./bot";
-    corepack.enable = true;
-    yarn = {
-      # enable = true;
-      # install.enable = true;
+    npm = {
+      enable = true;
+      install.enable = true;
     };
   };
   languages.typescript.enable = true;
@@ -23,6 +22,7 @@
   languages.python = {
     enable = true;
     directory = "./api";
+    version = "3.14";
     venv = {
       enable = true;
       requirements = ./api/requirements.txt;
