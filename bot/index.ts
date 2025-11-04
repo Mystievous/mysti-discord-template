@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
-import { ComponentConfig } from "./scripts/ComponentConfig";
+import { ComponentConfig } from "scripts/ComponentConfig";
 
 dotenv.config({
   path: "./envs/.env",
@@ -114,4 +114,4 @@ async function init() {
   }
 }
 
-init().then(() => client.login());
+init().then(() => client.login(token));

@@ -16,6 +16,11 @@ class EntryRouter:
     entry_repository: EntryRepository = Depends(EntryRepository)
 
     # Routes
-    @router.post("/", response_model=EntryPublic)
+    @router.get(
+        "/",
+        response_model=EntryPublic,
+        operation_id="createEntry",
+        summary="Create a new entry.",
+    )
     async def create_entry(self, entry: EntryCreate) -> Entry:
         return await self.entry_repository.create_entry(name=entry.name)

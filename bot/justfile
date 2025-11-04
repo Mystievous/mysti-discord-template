@@ -6,6 +6,10 @@ list:
 install:
     npm install
 
+# Generate API client code
+generate-api:
+    npm run generate-api-client
+
 # Starts the bot in development mode
 dev:
     npm run dev

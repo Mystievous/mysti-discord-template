@@ -1,4 +1,4 @@
-import { CommandConfig, SlashCommandConfig } from "types/configs/CommandConfig";
+import { CommandConfig } from "types/configs/CommandConfig";
 import dotenv from "dotenv";
 import { REST, Routes } from "discord.js";
 import fs from "fs";
