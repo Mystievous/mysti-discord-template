@@ -5,31 +5,42 @@ import {
   Collection,
   ContextMenuCommandBuilder,
   GatewayIntentBits,
-  SlashCommandBuilder
+  SlashCommandBuilder,
 } from "discord.js";
 import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { EventConfig } from "types/configs/EventConfig";
-import { ComponentConfig } from "./scripts/ComponentConfig";
+import { ComponentConfig } from "scripts/ComponentConfig";
 
 dotenv.config({
-  path: "./envs/.env"
-})
+  path: "./envs/.env",
+});
 
-const discordClientOptions: ClientOptions = {
-  intents: [GatewayIntentBits.Guilds]
+const token = process.env.TOKEN;
+
+if (!token) {
+  throw new Error("Bot token is not defined in environment variables");
 }
 
-const client = new ClientExtended(
-  discordClientOptions
-);
+const discordClientOptions: ClientOptions = {
+  intents: [GatewayIntentBits.Guilds],
+};
+
+const client = new ClientExtended(discordClientOptions);
+
+const includeExamples =
+  process.env.INCLUDE_EXAMPLES &&
+  process.env.INCLUDE_EXAMPLES.toLowerCase() === "true";
 
 async function init() {
   const commandFoldersPath = path.join(__dirname, "commands");
   const commandFolders = fs.readdirSync(commandFoldersPath);
 
   for (const folder of commandFolders) {
+    if (folder === "example" && !includeExamples) {
+      continue;
+    }
     const commandsPath = path.join(commandFoldersPath, folder);
     const commandFiles = fs
       .readdirSync(commandsPath)
@@ -57,6 +68,9 @@ async function init() {
   const componentFolders = fs.readdirSync(componentFoldersPath);
 
   for (const folder of componentFolders) {
+    if (folder === "example" && !includeExamples) {
+      continue;
+    }
     const componentsPath = path.join(componentFoldersPath, folder);
     const componentsFiles = fs
       .readdirSync(componentsPath)
@@ -100,4 +114,4 @@ async function init() {
   }
 }
 
-init().then(() => client.login(process.env.TOKEN));
+init().then(() => client.login(token));

@@ -4,16 +4,20 @@ list:
 
 # Install node libraries
 install:
-    yarn install
+    npm install
+
+# Generate API client code
+generate-api-client:
+    npm run generate-api-client
 
 # Starts the bot in development mode
 dev:
-    yarn dev
+    npm run dev
 
 # Starts the bot
 start:
-    yarn start
+    npm run start
 
 # Deploys bot commands
 deploy:
-    yarn deploy-commands
+    npm run deploy-commands

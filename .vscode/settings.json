@@ -1,5 +1,6 @@
 {
-    "python.analysis.include": [
-        "api"
-    ]
+  // Configure the Python analysis and autocomplete to use the 'api' directory
+  "python.analysis.include": ["api"],
+  "python.analysis.extraPaths": ["api"],
+  "python.autoComplete.extraPaths": ["api"]
 }

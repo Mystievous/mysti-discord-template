@@ -6,6 +6,10 @@ list:
 install:
     pip install -r requirements.txt
 
+# =======
+# API
+# =======
+
 # Starts the API in development mode
 dev:
     fastapi dev
@@ -14,10 +18,19 @@ dev:
 start:
     fastapi run
 
+# Generates the OpenAPI schema file
+generate-openapi:
+    rm -f openapi.json || true
+    python generate-openapi.py
+    @echo "Generated ./api/openapi.json"
+
+# =======
+# DATABASE MIGRATIONS
+# =======
 
 # Creates a new Alembic migration revision
 revise *message:
-    alembic revision --autogenerate -m "{{message}}"
+    alembic revision --autogenerate -m "{{ message }}"
 
 # Applies Alembic migrations
 migrate:
