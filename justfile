@@ -5,10 +5,11 @@ mod api
 list:
     just --list
 
+# Deploy bot commands
 alias deploy := bot::deploy
 
 # Generate API schema and typescript code
-generate-api: api::generate-openapi bot::generate-api
+generate-api-client: api::generate-openapi bot::generate-api
 
 # Install pip and yarn dependencies
 install: api::install bot::install

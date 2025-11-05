@@ -7,7 +7,7 @@ install:
     npm install
 
 # Generate API client code
-generate-api:
+generate-api-client:
     npm run generate-api-client
 
 # Starts the bot in development mode

@@ -9,6 +9,9 @@ from db.tables import Entry
 router = InferringRouter()
 
 
+# Router Class.
+# This class should contain all bot-facing endpoints.
+# Specific database logic should be in the repository class.
 @cbv(router)
 class EntryRouter:
 
@@ -16,7 +19,7 @@ class EntryRouter:
     entry_repository: EntryRepository = Depends(EntryRepository)
 
     # Routes
-    @router.get(
+    @router.post(
         "/",
         response_model=EntryPublic,
         operation_id="createEntry",
