@@ -92,6 +92,9 @@ This includes:
 To generate code with orval, just run `just generate-api-client`.<br/>
 This will automatically generate the `openapi.json` schema file from FastAPI, and run orval to generate the Typescript code from it based on the `orval.config.mjs` configuration.
 
+### API Key
+To generate the API key, run `just generate-api-key` and copy it to your `.env` file.
+
 ### Using API endpoints
 To use API endpoints, you just have to import the functions (based on the `operation_id` of the endpoint) and use them like normal.
 

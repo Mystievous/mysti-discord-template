@@ -24,6 +24,10 @@ generate-openapi:
     python generate-openapi.py
     @echo "Generated ./api/openapi.json"
 
+# Generates an API key
+generate-api-key *purpose="bot":
+    python generate-api-key.py "{{ purpose }}"
+
 # =======
 # DATABASE MIGRATIONS
 # =======
