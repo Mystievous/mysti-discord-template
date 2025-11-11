@@ -11,6 +11,9 @@ alias deploy := bot::deploy
 # Generate API schema and typescript code
 generate-api-client: api::generate-openapi bot::generate-api-client
 
+# Generate an API key
+generate-api-key *purpose="bot": (api::generate-api-key purpose)
+
 # Install pip and yarn dependencies
 install: api::install bot::install
 

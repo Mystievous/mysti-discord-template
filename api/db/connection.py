@@ -22,7 +22,7 @@ class DatabaseSettings(BaseSettings):
 
 settings = DatabaseSettings()  # type: ignore
 
-engine = create_engine(settings.database_uri, echo=True)
+engine = create_engine(settings.database_uri, echo=False)
 
 
 def initialize_database():

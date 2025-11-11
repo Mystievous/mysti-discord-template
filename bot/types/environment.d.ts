@@ -4,6 +4,7 @@ declare global {
       NODE_ENV: "development" | "production";
       TOKEN?: string;
       API_URL?: string;
+      API_KEY?: string;
       INCLUDE_EXAMPLES?: "True" | "False";
       CLIENT_ID?: string;
       GUILD_ID?: string;

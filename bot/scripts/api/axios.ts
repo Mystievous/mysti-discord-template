@@ -1,14 +1,21 @@
 import axios, { AxiosError } from "axios";
 import { convertAPIDates } from "./utils/date-utils";
 
-const { API_URL } = process.env;
+const { API_URL, API_KEY } = process.env;
 
 if (!API_URL) {
-  throw new Error("API config is invalid.");
+  throw new Error("API URL is not set in environment variables.");
+}
+
+if (!API_KEY) {
+  throw new Error("API key is not set in environment variables.");
 }
 
 const api = axios.create({
   baseURL: API_URL,
+  headers: {
+    "api-key": API_KEY,
+  },
 });
 
 api.interceptors.response.use(

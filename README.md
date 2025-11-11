@@ -21,9 +21,10 @@ This repository is also set up fully with a [devenv](https://devenv.sh/) project
    2. Otherwise, run `just install` and it will install the python libraries, then the npm packages
       - it is recommended to use a python virtual environment instead of a globally-installed python
 2. Configure the environment variables as described in both `./bot/envs/template.env` and `./api/envs/template.env`.
+   -  To generate the API key for the bot, run `just generate-api-key`
 3. Set up the backend database and generate the schema definition
-   1. run `just api generate-openapi` to generate the schema file
-   2. run `just api migrate` to run any outstanding migrations
+   1. run `just generate-api-client` to generate the API client
+   2. run `just api::migrate` to run any outstanding database migrations
 4. Finally, run `just dev` to build and run the bot in dev mode.
    - You also can run each service individually with `just api dev` and `just bot dev`
 5. To run in "production" mode, use `just start` instead. This will run it without reloading on file changes.
