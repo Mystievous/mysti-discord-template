@@ -7,16 +7,15 @@ import {
   TextDisplayBuilder,
   ThumbnailBuilder,
 } from "discord.js";
-import { SlashCommandConfig } from "types/configs/CommandConfig";
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
-export default {
+export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("section")
     .setDescription(
       "Example Command with a 'section' for the template repository."
     ),
   async execute(client, interaction) {
-
     // Button Section
     const textComponent = new TextDisplayBuilder().setContent(
       "## This is a section."
@@ -34,7 +33,6 @@ export default {
       .addTextDisplayComponents(textComponent, textComponent2, textComponent3)
       .setButtonAccessory(button);
 
-
     // Thumbnail Section
     const imageText = new TextDisplayBuilder().setContent(
       "## This is a section with an image."
@@ -45,17 +43,16 @@ export default {
 
     const thumbnailComponent = new ThumbnailBuilder({
       media: {
-        url: "https://avatars.githubusercontent.com/u/172342444?s=400&u=e678f633a9fd14ac199bc36ae7a530e27544ce39&v=4"
+        url: "https://avatars.githubusercontent.com/u/172342444?s=400&u=e678f633a9fd14ac199bc36ae7a530e27544ce39&v=4",
       },
       description: "The StarSeek Studios Logo.",
-    })
-    
+    });
+
     const imageSection = new SectionBuilder()
       .addTextDisplayComponents(imageText, imageText2)
       .setThumbnailAccessory(thumbnailComponent);
 
-
-    // Reply with the sections      
+    // Reply with the sections
     await interaction.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
@@ -66,4 +63,4 @@ export default {
       ],
     });
   },
-} as SlashCommandConfig;
+});

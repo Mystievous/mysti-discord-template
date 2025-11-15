@@ -4,16 +4,14 @@
 Slash commands can be created in *a subfolder* of the `./bot/commands/` folder. There are example commands already provided in `./bot/commands/example/`.
 
 ```ts
-export default {
+export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("message")
     .setDescription("Example Command for the template repository."),
   async execute(client, interaction) {
-    return await interaction.reply(
-      `Hello, ${userMention(interaction.user.id)}`
-    );
+    await interaction.reply(`Hello, ${userMention(interaction.user.id)}`);
   },
-} as SlashCommandConfig;
+});
 ```
 
 They must be one of the `CommandConfig` types which have the following properties:
@@ -56,7 +54,7 @@ The constructor parameters are as follows:
 > [!WARNING]  
 > Don't use semicolons in component IDs nor any Dynamic Data as described below.
 
-To retrieve the builder for a component, to use in action rows, use `component.getBuilder()`  
+To retrieve the builder for a component, to use in action rows, use `component.getBuilder()`
 For further usage with custom data, see below.
 
 ### Dynamic Component Data

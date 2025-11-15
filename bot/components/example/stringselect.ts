@@ -1,4 +1,4 @@
-import { StringSelectConfig } from "app/scripts/ComponentConfig";
+import { StringSelectConfig } from "app/scripts/bot_structures/ComponentConfig";
 import {
   MessageFlags,
   StringSelectMenuBuilder,

@@ -1,9 +1,9 @@
 import { createEntry } from "app/scripts/api/generated/endpoints/entries";
 import { isAxiosError } from "axios";
 import { SlashCommandBuilder } from "discord.js";
-import { SlashCommandConfig } from "types/configs/CommandConfig";
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
-export default {
+export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("database")
     .setDescription("Example Command to write to the database.")
@@ -33,4 +33,4 @@ export default {
       await interaction.editReply(`Error: ${e.message}`);
     }
   },
-} as SlashCommandConfig;
+});

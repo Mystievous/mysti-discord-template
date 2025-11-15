@@ -1,6 +1,6 @@
 import {
   ButtonConfig,
-} from "app/scripts/ComponentConfig";
+} from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,

@@ -1,9 +1,9 @@
 import { Events, Interaction } from "discord.js";
-import { EventConfig } from "types/configs/EventConfig";
+import { makeEvent } from "app/scripts/bot_structures/EventConfig";
 import { ClientExtended } from "scripts/ClientExtended";
-import { separateData } from "app/scripts/ComponentConfig";
+import { separateData } from "app/scripts/bot_structures/ComponentConfig";
 
-export default {
+export default makeEvent({
   name: Events.InteractionCreate,
   execute(client: ClientExtended, interaction: Interaction) {
     if (!interaction.isMessageComponent()) return;
@@ -25,4 +25,4 @@ export default {
       console.error(error);
     }
   },
-} as EventConfig;
+});

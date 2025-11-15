@@ -1,10 +1,10 @@
 import { Events } from "discord.js";
-import { EventConfig } from "types/configs/EventConfig";
+import { makeEvent } from "app/scripts/bot_structures/EventConfig";
 
-export default {
+export default makeEvent({
   name: Events.ClientReady,
   once: true,
   execute(client) {
     console.log(`Ready! Logged in as ${client.user?.tag}`);
   },
-} as EventConfig;
+});

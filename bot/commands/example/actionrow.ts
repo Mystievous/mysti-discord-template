@@ -15,9 +15,9 @@ import {
   TextDisplayBuilder,
   UserSelectMenuBuilder,
 } from "discord.js";
-import { SlashCommandConfig } from "types/configs/CommandConfig";
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
-export default {
+export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("actionrow")
     .setDescription(
@@ -32,7 +32,9 @@ export default {
       buttonWithData.getBuilder(randomUUID())
     );
 
-    const separator = new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large);
+    const separator = new SeparatorBuilder().setSpacing(
+      SeparatorSpacingSize.Large
+    );
 
     const selectLabel = new TextDisplayBuilder().setContent("Select:");
 
@@ -49,12 +51,12 @@ export default {
       flags: MessageFlags.IsComponentsV2,
       components: [
         buttonLabel,
-        buttonRow, 
+        buttonRow,
         separator,
         selectLabel,
-        stringSelectRow, 
-        userSelectRow
+        stringSelectRow,
+        userSelectRow,
       ],
     });
   },
-} as SlashCommandConfig;
+});

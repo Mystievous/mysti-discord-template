@@ -1,4 +1,9 @@
-import { CommandConfig } from "types/configs/CommandConfig";
+import {
+  buildSubcommandData,
+  CommandBuilderFactories,
+  CommandConfig,
+  type AnyCommandConfig,
+} from "app/scripts/bot_structures/CommandConfig";
 import dotenv from "dotenv";
 import { REST, Routes } from "discord.js";
 import fs from "fs";
@@ -39,14 +44,14 @@ for (const folder of commandFolders) {
     .filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
   commands[guildId] = commands[guildId] ?? [];
 
-  // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
     const commandPath = path.join(commandsPath, file);
-    const command: CommandConfig = require(commandPath).default;
+    const command: AnyCommandConfig = require(commandPath).default;
+    let data = CommandBuilderFactories[command.type](command as any);
     if (command.global) {
-      globalCommands.push(command.data.toJSON());
+      globalCommands.push(data.toJSON());
     } else {
-      commands[guildId].push(command.data.toJSON());
+      commands[guildId].push(data.toJSON());
     }
     count++;
   }

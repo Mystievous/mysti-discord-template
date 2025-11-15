@@ -10,8 +10,9 @@ import {
 import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
-import { EventConfig } from "types/configs/EventConfig";
-import { ComponentConfig } from "scripts/ComponentConfig";
+import { EventConfig } from "app/scripts/bot_structures/EventConfig";
+import { ComponentConfig } from "app/scripts/bot_structures/ComponentConfig";
+import type { AnyCommandConfig } from "./scripts/bot_structures/CommandConfig";
 
 dotenv.config({
   path: "./envs/.env",
@@ -48,18 +49,14 @@ async function init() {
 
     for (const file of commandFiles) {
       const filePath = path.join(commandsPath, file);
-      const command = (await import(filePath)).default;
+      const command: AnyCommandConfig = (await import(filePath)).default;
       // Set a new item in the Collection with the key as the command name and the value as the exported module
-      if ("data" in command && "execute" in command) {
-        if (command.data instanceof SlashCommandBuilder) {
-          client.slashCommands.set(command.data.name, command);
-        } else if (command.data instanceof ContextMenuCommandBuilder) {
-          client.contextMenuCommands.set(command.data.name, command);
-        }
-      } else {
-        console.log(
-          `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-        );
+      if (command.type === "slash") {
+        client.slashCommands.set(command.data.name, command);
+      } else if (command.type === "subcommand") {
+        client.slashCommands.set(command.data.name, command);
+      } else if (command.type === "context-menu") {
+        client.contextMenuCommands.set(command.data.name, command);
       }
     }
   }

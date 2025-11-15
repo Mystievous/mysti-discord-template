@@ -1,6 +1,6 @@
 import {
   UserSelectConfig,
-} from "app/scripts/ComponentConfig";
+} from "app/scripts/bot_structures/ComponentConfig";
 import {
   MessageFlags,
   UserSelectMenuBuilder,
