@@ -12,7 +12,7 @@ generate-api-client:
 
 # Starts the bot in development mode
 dev:
-    npm run dev
+    npm run dev < /dev/null
 
 # Starts the bot
 start:
