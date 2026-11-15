@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from core.responses import CONFLICT
 from db.tables import Entry
 
 from .models import EntryCreate, EntryPublic
@@ -19,7 +20,7 @@ router = APIRouter()
     "/",
     response_model=EntryPublic,
     summary="Create a new entry.",
-    responses={409: {"description": "An entry with that name already exists."}},
+    responses=CONFLICT,
 )
 def create_entry(entry_repository: EntryRepoDep, entry: EntryCreate) -> Entry:
     return entry_repository.create_entry(name=entry.name)

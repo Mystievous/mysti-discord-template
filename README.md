@@ -30,7 +30,7 @@ This repository is also set up fully with a [devenv](https://devenv.sh/) project
 3. Set up the backend database and generate the schema definition
    1. run `just generate-api-client` to generate the API client
    2. run `just api::migrate` to run any outstanding database migrations
-4. Finally, run `just dev` to build and run the bot in dev mode.
+4. Finally, run `just dev` to run the bot and API in dev mode.
    - You also can run each service individually with `just api dev` and `just bot dev`
 5. To run in "production" mode, use `just start` instead. This will run it without reloading on file changes.
 
