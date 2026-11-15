@@ -1,20 +1,18 @@
-from typing import Annotated
 import uuid
+from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import APIKeyHeader
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
 from db.connection import DatabaseDependency
 from db.tables import APIKey
 
-
 api_key_schema = APIKeyHeader(name="api-key", auto_error=False)
+ApiKeyValueDep = Annotated[str | None, Depends(api_key_schema)]
 
 
-def api_key_auth(
-    session: DatabaseDependency, api_key: Annotated[str | None, Depends(api_key_schema)]
-) -> bool:
+def api_key_auth(session: DatabaseDependency, api_key: ApiKeyValueDep) -> bool:
     if not api_key:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="API key missing"

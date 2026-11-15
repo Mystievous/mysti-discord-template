@@ -1,12 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi.params import Depends
-from fastapi.responses import JSONResponse
-from sqlalchemy.exc import IntegrityError
 
 import dotenv
 from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 
-from core.dependencies import api_key_auth
+from core.openapi import operation_id
 from core.router import router
 
 dotenv.load_dotenv("envs/.env")
@@ -21,13 +20,17 @@ async def lifespan(_app: FastAPI):
     yield
     # shutdown
 
-    pass
+
+app = FastAPI(
+    lifespan=lifespan,
+    generate_unique_id_function=operation_id,
+)
 
 
-app = FastAPI(lifespan=lifespan)
-
-
-app.include_router(router, prefix="/api", dependencies=[Depends(api_key_auth)])
+app.include_router(
+    router,
+    prefix="/api",
+)
 
 
 # SQLAlchemy Integrity Error Handler
