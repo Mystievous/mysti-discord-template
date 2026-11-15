@@ -1,4 +1,4 @@
-import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
@@ -6,16 +6,16 @@ import {
   userMention,
 } from "discord.js";
 
-export default new ButtonConfig(
-  "section",
-  () =>
+export default makeButton({
+  id: "section",
+  createBuilder: () =>
     new ButtonBuilder()
       .setLabel("Section Button")
       .setStyle(ButtonStyle.Primary),
-  async (_client, interaction) => {
+  async execute(_client, interaction) {
     await interaction.reply({
       content: `You clicked the section button, ${userMention(interaction.user.id)}`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});

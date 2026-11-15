@@ -52,7 +52,10 @@ async function init() {
       } else if (command.type === "subcommand") {
         client.slashCommands.set(command.data.name, command);
       } else if (command.type === "context-menu") {
-        client.contextMenuCommands.set(command.data.name, command);
+        client.contextMenuCommands.set(
+          `${command.contextType}:${command.data.name}`,
+          command,
+        );
       }
     }
   }

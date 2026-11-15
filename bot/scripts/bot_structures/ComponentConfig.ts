@@ -49,118 +49,94 @@ export type ComponentExecute<I extends MessageComponentInteraction> = (
   data?: string,
 ) => Promise<void>;
 
-export abstract class ComponentConfig<
-  b extends AnyComponentBuilder = AnyComponentBuilder,
-  i extends MessageComponentInteraction = MessageComponentInteraction,
+// Everything in a component file
+export interface ComponentDefinition<
+  B extends AnyComponentBuilder,
+  I extends MessageComponentInteraction,
 > {
-  readonly type: ComponentType;
-  readonly id: string;
-  execute?: ComponentExecute<i>;
-
-  private readonly createBuilder: () => b;
-
-  constructor(
-    type: ComponentType,
-    id: string,
-    createBuilder: () => b,
-    execute?: ComponentExecute<i>,
-  ) {
-    this.type = type;
-    this.id = id;
-    this.createBuilder = createBuilder;
-    this.execute = execute;
-  }
-
-  getBuilder(data?: string): b {
-    const builder = this.createBuilder();
-    builder.setCustomId(data ? addData(this.id, data) : this.id);
-    return builder;
-  }
+  // Unique ID, used to route interactions to this component. Must not contain ";"
+  id: string;
+  // Creates the builder, called by every `getBuilder()`.
+  // Fresh builders are required because of custom data storage.
+  createBuilder: () => B;
+  execute: ComponentExecute<I>;
 }
 
-export class ButtonConfig extends ComponentConfig<
-  ButtonBuilder,
-  ButtonInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => ButtonBuilder,
-    execute?: ComponentExecute<ButtonInteraction>,
-  ) {
-    super(ComponentType.Button, id, createBuilder, execute);
-  }
+// A loaded component, with the definition along with the type and `getBuilder()`
+export interface ComponentConfig<
+  B extends AnyComponentBuilder = AnyComponentBuilder,
+  I extends MessageComponentInteraction = MessageComponentInteraction,
+> extends ComponentDefinition<B, I> {
+  type: ComponentType;
+  // Builds the component, with `data` encoded into the custom ID with `addData`
+  getBuilder: (data?: string) => B;
 }
 
-export class RoleSelectConfig extends ComponentConfig<
-  RoleSelectMenuBuilder,
-  RoleSelectMenuInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => RoleSelectMenuBuilder,
-    execute?: ComponentExecute<RoleSelectMenuInteraction>,
-  ) {
-    super(ComponentType.RoleSelect, id, createBuilder, execute);
-  }
+// Creates a `make*` function for one component type
+function componentMaker<
+  B extends AnyComponentBuilder,
+  I extends MessageComponentInteraction,
+>(type: ComponentType) {
+  return (definition: ComponentDefinition<B, I>): ComponentConfig<B, I> => ({
+    ...definition,
+    type,
+    getBuilder(data) {
+      const builder = definition.createBuilder();
+      builder.setCustomId(data ? addData(definition.id, data) : definition.id);
+      return builder;
+    },
+  });
 }
 
-export class UserSelectConfig extends ComponentConfig<
-  UserSelectMenuBuilder,
-  UserSelectMenuInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => UserSelectMenuBuilder,
-    execute?: ComponentExecute<UserSelectMenuInteraction>,
-  ) {
-    super(ComponentType.UserSelect, id, createBuilder, execute);
-  }
-}
-
-export class StringSelectConfig extends ComponentConfig<
-  StringSelectMenuBuilder,
-  StringSelectMenuInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => StringSelectMenuBuilder,
-    execute?: ComponentExecute<StringSelectMenuInteraction>,
-  ) {
-    super(ComponentType.StringSelect, id, createBuilder, execute);
-  }
-}
-
-export class ChannelSelectConfig extends ComponentConfig<
+export const makeButton = componentMaker<ButtonBuilder, ButtonInteraction>(
+  ComponentType.Button,
+);
+export const makeChannelSelect = componentMaker<
   ChannelSelectMenuBuilder,
   ChannelSelectMenuInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => ChannelSelectMenuBuilder,
-    execute?: ComponentExecute<ChannelSelectMenuInteraction>,
-  ) {
-    super(ComponentType.ChannelSelect, id, createBuilder, execute);
-  }
-}
-
-export class MentionableSelectConfig extends ComponentConfig<
+>(ComponentType.ChannelSelect);
+export const makeMentionableSelect = componentMaker<
   MentionableSelectMenuBuilder,
   MentionableSelectMenuInteraction
-> {
-  constructor(
-    id: string,
-    createBuilder: () => MentionableSelectMenuBuilder,
-    execute?: ComponentExecute<MentionableSelectMenuInteraction>,
-  ) {
-    super(ComponentType.MentionableSelect, id, createBuilder, execute);
-  }
-}
+>(ComponentType.MentionableSelect);
+export const makeUserSelect = componentMaker<
+  UserSelectMenuBuilder,
+  UserSelectMenuInteraction
+>(ComponentType.UserSelect);
+export const makeRoleSelect = componentMaker<
+  RoleSelectMenuBuilder,
+  RoleSelectMenuInteraction
+>(ComponentType.RoleSelect);
+export const makeStringSelect = componentMaker<
+  StringSelectMenuBuilder,
+  StringSelectMenuInteraction
+>(ComponentType.StringSelect);
 
 //
 // Helper Functions
 //
+//
+const COMPONENT_TYPES: ReadonlySet<unknown> = new Set([
+  ComponentType.Button,
+  ComponentType.StringSelect,
+  ComponentType.UserSelect,
+  ComponentType.RoleSelect,
+  ComponentType.ChannelSelect,
+  ComponentType.MentionableSelect,
+]);
 
 // Runtime check for a component's export
 export function isComponentConfig(value: unknown): value is ComponentConfig {
-  return value instanceof ComponentConfig;
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value &&
+    COMPONENT_TYPES.has(value.type) &&
+    "id" in value &&
+    typeof value.id === "string" &&
+    "getBuilder" in value &&
+    typeof value.getBuilder === "function" &&
+    "execute" in value &&
+    typeof value.execute === "function"
+  );
 }

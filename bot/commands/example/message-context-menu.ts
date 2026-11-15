@@ -1,12 +1,9 @@
-import { makeContextMenuCommand } from "app/scripts/bot_structures/CommandConfig";
-import { ApplicationCommandType, ContextMenuCommandBuilder } from "discord.js";
+import { makeMessageContextMenuCommand } from "app/scripts/bot_structures/CommandConfig";
+import { ContextMenuCommandBuilder } from "discord.js";
 
-export default makeContextMenuCommand({
-  data: new ContextMenuCommandBuilder()
-    .setName("message-context-menu-command")
-    .setType(ApplicationCommandType.Message),
+export default makeMessageContextMenuCommand({
+  data: new ContextMenuCommandBuilder().setName("message-context-menu-command"),
   async execute(_client, interaction) {
-    if (!interaction.isMessageContextMenuCommand()) return;
     await interaction.reply(
       `Message contains: ${interaction.targetMessage.content}`,
     );

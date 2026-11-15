@@ -1,4 +1,4 @@
-import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
@@ -6,13 +6,14 @@ import {
   userMention,
 } from "discord.js";
 
-export default new ButtonConfig(
-  "decline",
-  () => new ButtonBuilder().setLabel("Decline").setStyle(ButtonStyle.Danger),
-  async (_client, interaction) => {
+export default makeButton({
+  id: "decline",
+  createBuilder: () =>
+    new ButtonBuilder().setLabel("Decline").setStyle(ButtonStyle.Danger),
+  async execute(_client, interaction) {
     await interaction.reply({
       content: `Declined, ${userMention(interaction.user.id)}`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});

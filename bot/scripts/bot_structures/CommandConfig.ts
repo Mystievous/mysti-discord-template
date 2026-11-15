@@ -1,22 +1,20 @@
+import { ApplicationCommandType } from "discord.js";
 import type {
   ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
-  ContextMenuCommandInteraction,
+  MessageContextMenuCommandInteraction,
   RESTPostAPIApplicationCommandsJSONBody,
-  SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
   SlashCommandSubcommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
+  UserContextMenuCommandInteraction,
 } from "discord.js";
 import type { ClientExtended } from "scripts/ClientExtended";
 
 type CommandBuilder = { toJSON: () => unknown };
-type CommandType = "slash" | "subcommand" | "context-menu";
-const COMMAND_TYPES: ReadonlySet<unknown> = new Set([
-  "slash",
-  "subcommand",
-  "context-menu",
-]);
+const COMMAND_TYPES = ["slash", "subcommand", "context-menu"] as const;
+type CommandType = (typeof COMMAND_TYPES)[number];
+const COMMAND_TYPE_SET: ReadonlySet<unknown> = new Set(COMMAND_TYPES);
 
 export interface CommandConfig<
   Builder extends CommandBuilder = CommandBuilder,
@@ -38,8 +36,7 @@ export interface ExecutableCommandConfig<
 //
 
 export interface SlashCommandConfig extends ExecutableCommandConfig<
-  | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
-  | SlashCommandOptionsOnlyBuilder,
+  SlashCommandOptionsOnlyBuilder,
   ChatInputCommandInteraction
 > {
   type: "slash";
@@ -70,7 +67,7 @@ export interface SubcommandCommand extends SubcommandBase {
       SlashCommandSubcommandBuilder,
       "setName" | "setDescription"
     >,
-  ) => Omit<SlashCommandSubcommandBuilder, "setName" | "setDescription">;
+  ) => unknown;
   execute: (
     client: ClientExtended,
     interaction: ChatInputCommandInteraction,
@@ -79,25 +76,18 @@ export interface SubcommandCommand extends SubcommandBase {
 
 export interface SubcommandGroup extends SubcommandBase {
   type: "group";
-  subcommands: {
-    [key: string]: SubcommandCommand;
-  };
+  subcommands: Record<string, SubcommandCommand>;
 }
 
 export type SubcommandOrGroup = SubcommandCommand | SubcommandGroup;
 
-export interface SubcommandsCommandConfig extends CommandConfig<
-  Omit<
-    SlashCommandSubcommandBuilder | SlashCommandSubcommandsOnlyBuilder,
-    "addSubcommand" | "addSubcommandGroup"
-  >
-> {
+export interface SubcommandsCommandConfig extends CommandConfig<SlashCommandSubcommandsOnlyBuilder> {
   type: "subcommand";
   subcommands: Record<string, SubcommandOrGroup>;
 }
 
-export function makeSubcommand(
-  config: Omit<SubcommandsCommandConfig, "type" | "execute">,
+export function makeSubcommandCommand(
+  config: Omit<SubcommandsCommandConfig, "type">,
 ): SubcommandsCommandConfig {
   return {
     ...config,
@@ -105,51 +95,43 @@ export function makeSubcommand(
   };
 }
 
+// Applies one subcommand's name, description, and options to `sub`
+function applySubcommand(
+  sub: SlashCommandSubcommandBuilder,
+  name: string,
+  config: SubcommandCommand,
+): SlashCommandSubcommandBuilder {
+  sub.setName(name).setDescription(config.description);
+  config.builder?.(sub);
+  return sub;
+}
+
+// Adds the subcommands onto `command.data` itself, so call this only once per command.
 export function buildSubcommandData(command: SubcommandsCommandConfig) {
-  const subcommandData = command.data as SlashCommandSubcommandsOnlyBuilder;
+  const subcommandData = command.data;
 
-  if (command.subcommands) {
-    for (const [name, subcommand] of Object.entries(command.subcommands)) {
-      if (subcommand.type === "command") {
-        subcommandData.addSubcommand((sub) => {
-          sub.setName(name);
-          if (subcommand.description) {
-            sub.setDescription(subcommand.description);
-          }
-          if (subcommand.builder) {
-            return subcommand.builder(sub) as SlashCommandSubcommandBuilder;
-          }
-          return sub;
-        });
-      }
+  for (const [name, subcommand] of Object.entries(command.subcommands)) {
+    if (subcommand.type === "command") {
+      subcommandData.addSubcommand((sub) =>
+        applySubcommand(sub, name, subcommand),
+      );
+    }
 
-      if (subcommand.type === "group") {
-        subcommandData.addSubcommandGroup((group) => {
-          group.setName(name);
-          if (subcommand.description) {
-            group.setDescription(subcommand.description);
-          }
+    if (subcommand.type === "group") {
+      subcommandData.addSubcommandGroup((group) => {
+        group.setName(name);
+        group.setDescription(subcommand.description);
 
-          for (const [subName, subcommandCommand] of Object.entries(
-            subcommand.subcommands,
-          )) {
-            group.addSubcommand((sub) => {
-              sub.setName(subName);
-              if (subcommandCommand.description) {
-                sub.setDescription(subcommandCommand.description);
-              }
-              if (subcommandCommand.builder) {
-                return subcommandCommand.builder(
-                  sub,
-                ) as SlashCommandSubcommandBuilder;
-              }
-              return sub;
-            });
-          }
+        for (const [subName, subcommandCommand] of Object.entries(
+          subcommand.subcommands,
+        )) {
+          group.addSubcommand((sub) =>
+            applySubcommand(sub, subName, subcommandCommand),
+          );
+        }
 
-          return group;
-        });
-      }
+        return group;
+      });
     }
   }
 
@@ -160,21 +142,43 @@ export function buildSubcommandData(command: SubcommandsCommandConfig) {
 // Context Menu Command Configuration
 //
 
-export interface ContextMenuCommandConfig extends ExecutableCommandConfig<
+type ContextMenuKind =
+  | ApplicationCommandType.Message
+  | ApplicationCommandType.User;
+
+type ContextMenuInteractionFor<K extends ContextMenuKind> =
+  K extends ApplicationCommandType.Message
+    ? MessageContextMenuCommandInteraction
+    : UserContextMenuCommandInteraction;
+
+export interface ContextMenuCommandConfig<
+  K extends ContextMenuKind = ContextMenuKind,
+> extends ExecutableCommandConfig<
   ContextMenuCommandBuilder,
-  ContextMenuCommandInteraction
+  ContextMenuInteractionFor<K>
 > {
   type: "context-menu";
+  contextType: K;
 }
 
-export function makeContextMenuCommand(
-  config: Omit<ContextMenuCommandConfig, "type">,
-): ContextMenuCommandConfig {
-  return {
+// The maker sets the builder's type, so it always matches the interaction type
+function contextMenuMaker<K extends ContextMenuKind>(contextType: K) {
+  return (
+    config: Omit<ContextMenuCommandConfig<K>, "type" | "contextType">,
+  ): ContextMenuCommandConfig<K> => ({
     ...config,
     type: "context-menu",
-  };
+    contextType,
+    data: config.data.setType(contextType),
+  });
 }
+
+export const makeMessageContextMenuCommand = contextMenuMaker(
+  ApplicationCommandType.Message,
+);
+export const makeUserContextMenuCommand = contextMenuMaker(
+  ApplicationCommandType.User,
+);
 
 //
 // Types Union
@@ -207,7 +211,7 @@ export function isCommandConfig(value: unknown): value is AnyCommandConfig {
     typeof value === "object" &&
     value !== null &&
     "type" in value &&
-    COMMAND_TYPES.has(value.type) &&
+    COMMAND_TYPE_SET.has(value.type) &&
     "data" in value
   );
 }

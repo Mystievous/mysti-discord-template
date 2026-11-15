@@ -1,13 +1,13 @@
-import { StringSelectConfig } from "app/scripts/bot_structures/ComponentConfig";
+import { makeStringSelect } from "app/scripts/bot_structures/ComponentConfig";
 import {
   MessageFlags,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js";
 
-export default new StringSelectConfig(
-  "stringselect",
-  () =>
+export default makeStringSelect({
+  id: "stringselect",
+  createBuilder: () =>
     new StringSelectMenuBuilder().addOptions([
       new StringSelectMenuOptionBuilder({
         label: "Option 1",
@@ -22,11 +22,11 @@ export default new StringSelectConfig(
         value: "option3",
       }),
     ]),
-  async (_client, interaction) => {
+  async execute(_client, interaction) {
     const selected = interaction.values[0];
     await interaction.reply({
       content: `Selected: ${selected}`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});

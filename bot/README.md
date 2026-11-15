@@ -25,6 +25,8 @@ Commands must be one of the `CommandConfig` types which have the following prope
   - `client`: The current `ClientExtended` of the bot. This includes the normal information, along with the loaded commands and components.
   - `interaction`: The object describing the command usage. This will include the user's id in `interaction.user.id`.
 
+Besides `makeSlashCommand`, there's `makeSubcommandCommand` for commands with subcommands (see `./bot/commands/example/subcommand.ts`), and `makeMessageContextMenuCommand` / `makeUserContextMenuCommand` for right-click menu commands (see `./bot/commands/example/message-context-menu.ts`). The context menu makers set the command type themselves, so `interaction` is already typed as a message or user interaction.
+
 Once configured and added to a subfolder of `./bot/commands/`, you must run `just bot deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
 
 ## Components (i.e. Buttons, Selects)
@@ -32,21 +34,22 @@ Once configured and added to a subfolder of `./bot/commands/`, you must run `jus
 Components can be created in _a subfolder_ of the `./bot/components/` folder. There are example components already provided in `./bot/components/example/`, as well as a usage example in `./bot/commands/example/actionrow.ts`.
 
 ```ts
-export default new ButtonConfig(
-  "accept",
-  () => new ButtonBuilder().setLabel("Accept").setStyle(ButtonStyle.Primary),
-  async (_client, interaction) => {
+export default makeButton({
+  id: "accept",
+  createBuilder: () =>
+    new ButtonBuilder().setLabel("Accept").setStyle(ButtonStyle.Primary),
+  async execute(_client, interaction) {
     await interaction.reply({
       content: `Accepted, ${userMention(interaction.user.id)}`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});
 ```
 
-Components are different from commands in that they are classes that you must make a `new` instance of.
+Components are made with the `make*` function for their type: `makeButton`, `makeStringSelect`, `makeUserSelect`, `makeRoleSelect`, `makeChannelSelect` and `makeMentionableSelect`.
 
-The constructor parameters are as follows:
+The fields are as follows:
 
 - `id`: The unique ID of the component.
 - `createBuilder`: A function that returns the `ComponentBuilder` that describes the component. These will be the specific builder type of the component you are building. A fresh builder is created every time `getBuilder()` is called, so separate uses never overwrite each other.

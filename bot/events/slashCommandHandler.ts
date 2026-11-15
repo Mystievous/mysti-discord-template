@@ -38,18 +38,16 @@ export default makeEvent({
           commandToRun = groupConfig;
         }
 
-        const subcommand = interaction.options.getSubcommand(false);
-        if (subcommand) {
-          const subcommandConfig = commandToRun.subcommands[subcommand];
-          if (!subcommandConfig || subcommandConfig.type !== "command") {
-            console.error(
-              `[command /${interaction.commandName}] Unknown subcommand "${subcommand}".`,
-            );
-            await universalRespond(interaction, UserMessages.unavailable);
-            return;
-          }
-          await subcommandConfig.execute(client, interaction);
+        const subcommand = interaction.options.getSubcommand(true);
+        const subcommandConfig = commandToRun.subcommands[subcommand];
+        if (!subcommandConfig || subcommandConfig.type !== "command") {
+          console.error(
+            `[command /${interaction.commandName}] Unknown subcommand "${subcommand}".`,
+          );
+          await universalRespond(interaction, UserMessages.unavailable);
+          return;
         }
+        await subcommandConfig.execute(client, interaction);
       } else {
         await command.execute(client, interaction);
       }
