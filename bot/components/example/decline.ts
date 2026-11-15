@@ -1,6 +1,4 @@
-import {
-  ButtonConfig,
-} from "app/scripts/bot_structures/ComponentConfig";
+import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
@@ -10,13 +8,11 @@ import {
 
 export default new ButtonConfig(
   "decline",
-  new ButtonBuilder()
-    .setLabel("Decline")
-    .setStyle(ButtonStyle.Danger),
-  async (client, interaction) => {
+  () => new ButtonBuilder().setLabel("Decline").setStyle(ButtonStyle.Danger),
+  async (_client, interaction) => {
     await interaction.reply({
       content: `Declined, ${userMention(interaction.user.id)}`,
-      flags: MessageFlags.Ephemeral
+      flags: MessageFlags.Ephemeral,
     });
-  }
+  },
 );

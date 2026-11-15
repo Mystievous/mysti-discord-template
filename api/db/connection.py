@@ -2,8 +2,7 @@ import logging
 from typing import Annotated
 
 from fastapi import Depends
-from pydantic_settings import BaseSettings
-
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -15,9 +14,7 @@ logger = logging.getLogger(__name__)
 class DatabaseSettings(BaseSettings):
     database_uri: str
 
-    class Config:
-        env_file = "envs/.env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file="envs/.env", env_file_encoding="utf-8")
 
 
 settings = DatabaseSettings()  # type: ignore

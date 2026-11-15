@@ -2,9 +2,9 @@
 list:
     just --list
 
-# Installs pip requirements
+# Installs python dependencies
 install:
-    pip install -r requirements.txt
+    uv sync
 
 # =======
 # API

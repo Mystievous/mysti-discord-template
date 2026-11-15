@@ -10,9 +10,9 @@ export default makeSubcommand({
       type: "command",
       description: "Example subcommand",
       builder: (subcommand) => subcommand,
-      async execute(client, interaction) {
+      async execute(_client, interaction) {
         await interaction.reply(
-          `This is an example subcommand, ${userMention(interaction.user.id)}!`
+          `This is an example subcommand, ${userMention(interaction.user.id)}!`,
         );
       },
     },
@@ -28,15 +28,15 @@ export default makeSubcommand({
               option
                 .setName("user")
                 .setDescription("A user option.")
-                .setRequired(true)
+                .setRequired(true),
             );
           },
-          async execute(client, interaction) {
+          async execute(_client, interaction) {
             const user = interaction.options.getUser("user", true);
             await interaction.reply(
               `This is an example command inside a group with a command option, ${userMention(
-                interaction.user.id
-              )}! Selected user: *${user.displayName}*`
+                interaction.user.id,
+              )}! Selected user: *${user.displayName}*`,
             );
           },
         },
@@ -44,11 +44,11 @@ export default makeSubcommand({
           type: "command",
           description: "Another example command inside a group.",
           builder: (subcommand) => subcommand,
-          async execute(client, interaction) {
+          async execute(_client, interaction) {
             await interaction.reply(
               `This is another example command inside a group, ${userMention(
-                interaction.user.id
-              )}!`
+                interaction.user.id,
+              )}!`,
             );
           },
         },

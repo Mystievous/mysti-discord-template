@@ -1,29 +1,26 @@
-from fastapi import Depends
-from fastapi_utils.cbv import cbv
-from fastapi_utils.inferring_router import InferringRouter
+from fastapi import APIRouter
 
-from .repository import EntryRepository
-from .models import EntryCreate, EntryPublic
+from core.responses import CONFLICT
 from db.tables import Entry
 
-router = InferringRouter()
+from .models import EntryCreate, EntryPublic
+from .repository import EntryRepoDep
+
+router = APIRouter()
 
 
-# Router Class.
-# This class should contain all bot-facing endpoints.
-# Specific database logic should be in the repository class.
-@cbv(router)
-class EntryRouter:
-
-    # Dependencies
-    entry_repository: EntryRepository = Depends(EntryRepository)
-
-    # Routes
-    @router.post(
-        "/",
-        response_model=EntryPublic,
-        operation_id="createEntry",
-        summary="Create a new entry.",
-    )
-    async def create_entry(self, entry: EntryCreate) -> Entry:
-        return await self.entry_repository.create_entry(name=entry.name)
+# Return the SQLAlchemy model directly. `response_model` is how we tell
+# fastapi what type it should actually be returning to the client.
+#
+# `response_model` must be a pydantic type.
+#
+# Routes should also be plain `def`, not `async def`, since our SQLAlchemy
+# session is blocking.
+@router.post(
+    "/",
+    response_model=EntryPublic,
+    summary="Create a new entry.",
+    responses=CONFLICT,
+)
+def create_entry(entry_repository: EntryRepoDep, entry: EntryCreate) -> Entry:
+    return entry_repository.create_entry(name=entry.name)

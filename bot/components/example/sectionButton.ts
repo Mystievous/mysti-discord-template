@@ -1,6 +1,4 @@
-import {
-  ButtonConfig,
-} from "app/scripts/bot_structures/ComponentConfig";
+import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
@@ -10,13 +8,14 @@ import {
 
 export default new ButtonConfig(
   "section",
-  new ButtonBuilder()
-    .setLabel("Section Button")
-    .setStyle(ButtonStyle.Primary),
-  async (client, interaction) => {
+  () =>
+    new ButtonBuilder()
+      .setLabel("Section Button")
+      .setStyle(ButtonStyle.Primary),
+  async (_client, interaction) => {
     await interaction.reply({
       content: `You clicked the section button, ${userMention(interaction.user.id)}`,
-      flags: MessageFlags.Ephemeral
+      flags: MessageFlags.Ephemeral,
     });
-  }
+  },
 );

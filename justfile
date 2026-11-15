@@ -14,7 +14,7 @@ generate-api-client: api::generate-openapi bot::generate-api-client
 # Generate an API key
 generate-api-key *purpose="bot": (api::generate-api-key purpose)
 
-# Install pip and yarn dependencies
+# Install python and node dependencies
 install: api::install bot::install
 
 # Starts both the bot and the API in development mode

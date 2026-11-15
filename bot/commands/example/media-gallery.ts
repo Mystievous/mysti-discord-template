@@ -10,9 +10,9 @@ export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("media-gallery")
     .setDescription(
-      "Example Command with a media gallery for the template repository."
+      "Example Command with a media gallery for the template repository.",
     ),
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     const mediaGallery = new MediaGalleryBuilder().addItems([
       {
         media: {
@@ -34,7 +34,7 @@ export default makeSlashCommand({
     ]);
 
     const textComponent = new TextDisplayBuilder().setContent(
-      "This message contains a media gallery."
+      "This message contains a media gallery.",
     );
 
     // Reply with the sections

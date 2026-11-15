@@ -46,6 +46,8 @@ router.include_router(entry_router, prefix="/entries", tags=["entries"])
 
 The tags allow us to easily organize them when viewing the generated docs, and when generating typescript code.
 
+Every route included in this router (mounted under `/api`) requires a valid `api-key` header. Routes registered directly on `app` in `main.py` (e.g. `/healthcheck`) are public.
+
 # Models
 
 Models are defined as [pydantic](https://docs.pydantic.dev/latest/) models, which extend the custom `BaseAppModel` from `core/base_classes.py`. This would be an example `model.py` file for reading and writing to/from the database.
@@ -81,41 +83,37 @@ Note the use of `Annotated` to define the specific `Field` restrictions. This is
 
 The views are where endpoints are defined.
 
-They are ["Class Based Views"](https://fastapi-restful.netlify.app/user-guide/class-based-views/#the-cbv-decorator) which allows us to define FastAPI dependencies like the Repository classes (see below) to be shared between all the endpoints without repetition of code.
+They are plain functions on an `APIRouter`. Dependencies like the Repository classes (see "Areas" above) are passed in as parameters, using an `Annotated` alias (e.g. `EntryRepoDep`, defined in `repository.py`) so they can be shared between all the endpoints without repetition of code.
 
 Following our `entry` examples, this is the `view.py` associated.
 ```py
-from fastapi import Depends
-from fastapi_utils.cbv import cbv
-from fastapi_utils.inferring_router import InferringRouter
+from fastapi import APIRouter
 
-from .repository import EntryRepository
-from .models import EntryCreate, EntryPublic
+from core.responses import CONFLICT
 from db.tables import Entry
 
-router = InferringRouter()
+from .models import EntryCreate, EntryPublic
+from .repository import EntryRepoDep
 
-@cbv(router)
-class EntryRouter:
+router = APIRouter()
 
-    # Dependencies
-    entry_repository: EntryRepository = Depends(EntryRepository)
 
-    # Routes
-    @router.post(
-        "/",
-        response_model=EntryPublic,
-        operation_id="createEntry",
-        summary="Create a new entry.",
-    )
-    async def create_entry(self, entry: EntryCreate) -> Entry:
-        return await self.entry_repository.create_entry(name=entry.name)
-
+@router.post(
+    "/",
+    response_model=EntryPublic,
+    summary="Create a new entry.",
+    responses=CONFLICT,
+)
+def create_entry(entry_repository: EntryRepoDep, entry: EntryCreate) -> Entry:
+    return entry_repository.create_entry(name=entry.name)
 ```
 
-- `response_model` is the class from `.models` that  exposes any information that should be visible to the bot.<br/>
-- `operation_id` is the raw openapi name for the endpoint. This must be unique across all endpoints, and is what the resulting function will be named when generated into typescript.
+- `response_model` is the class from `.models` that  exposes any information that should be visible to the bot. The function itself can return the SQLAlchemy table object directly, and FastAPI converts it.<br/>
 - `summary` is a basic summary of the endpoint's function.
+- `responses` documents any extra responses the endpoint can return (like `CONFLICT` for a 409), using the shared definitions in `core/responses.py`. These get typed in the generated typescript too. Combine them with `|`, e.g. `responses=CONFLICT | NOT_FOUND`. The API key errors are already added to every route in `core/router.py`.
+- The endpoint's openapi name (its "operation ID") is generated automatically from the function name in camelCase (`create_entry` -> `createEntry`). This is what the resulting function will be named when generated into typescript, so function names must be unique across all endpoints. To override it, pass `operation_id=` to the route decorator.
+
+Endpoints should be plain `def` functions, not `async def`, since the database session is blocking. FastAPI runs `def` endpoints in a threadpool so they don't block the server.
 
 # Alembic (Database Migrations)
 

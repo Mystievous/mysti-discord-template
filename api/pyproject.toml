@@ -1,0 +1,18 @@
+[project]
+name = "api"
+version = "0.0.0"
+requires-python = ">=3.14"
+dependencies = [
+  "pydantic-settings>=2.16.3",
+  "sqlalchemy>=2.1.8",
+  "alembic>=1.20.1",
+  "python-dotenv>=1.2.2",
+  "fastapi[standard-no-fastapi-cloud-cli]>=0.163.0",
+]
+
+[tool.uv]
+# This is an app, not an installable library
+package = false
+
+[tool.fastapi]
+entrypoint = "main:app"

@@ -21,30 +21,30 @@ export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("actionrow")
     .setDescription(
-      "Example Command with actionrows for the template repository."
+      "Example Command with actionrows for the template repository.",
     ),
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     const buttonLabel = new TextDisplayBuilder().setContent("Buttons:");
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
       accept.getBuilder(),
       decline.getBuilder(),
-      buttonWithData.getBuilder(randomUUID())
+      buttonWithData.getBuilder(randomUUID()),
     );
 
     const separator = new SeparatorBuilder().setSpacing(
-      SeparatorSpacingSize.Large
+      SeparatorSpacingSize.Large,
     );
 
     const selectLabel = new TextDisplayBuilder().setContent("Select:");
 
     const stringSelectRow =
       new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-        stringselect.getBuilder()
+        stringselect.getBuilder(),
       );
     const userSelectRow =
       new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
-        userselect.getBuilder()
+        userselect.getBuilder(),
       );
 
     await interaction.reply({
