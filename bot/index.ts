@@ -1,18 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  Awaitable,
   ClientOptions,
   Collection,
-  ContextMenuCommandBuilder,
   GatewayIntentBits,
-  SlashCommandBuilder,
 } from "discord.js";
 import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
-import { EventConfig } from "app/scripts/bot_structures/EventConfig";
-import { ComponentConfig } from "app/scripts/bot_structures/ComponentConfig";
-import type { AnyCommandConfig } from "./scripts/bot_structures/CommandConfig";
+import { isEventConfig } from "app/scripts/bot_structures/EventConfig";
+import {
+  ComponentConfig,
+  isComponentConfig,
+} from "app/scripts/bot_structures/ComponentConfig";
+import { isCommandConfig } from "./scripts/bot_structures/CommandConfig";
+import { loadDefaultExports } from "./scripts/loadDefaultExports";
 
 dotenv.config({
   path: "./envs/.env",
@@ -42,14 +45,12 @@ async function init() {
     if (folder === "example" && !includeExamples) {
       continue;
     }
-    const commandsPath = path.join(commandFoldersPath, folder);
-    const commandFiles = fs
-      .readdirSync(commandsPath)
-      .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 
-    for (const file of commandFiles) {
-      const filePath = path.join(commandsPath, file);
-      const command: AnyCommandConfig = (await import(filePath)).default;
+    const commandsPath = path.join(commandFoldersPath, folder);
+    for (const command of await loadDefaultExports(
+      commandsPath,
+      isCommandConfig,
+    )) {
       // Set a new item in the Collection with the key as the command name and the value as the exported module
       if (command.type === "slash") {
         client.slashCommands.set(command.data.name, command);
@@ -68,47 +69,47 @@ async function init() {
     if (folder === "example" && !includeExamples) {
       continue;
     }
-    const componentsPath = path.join(componentFoldersPath, folder);
-    const componentsFiles = fs
-      .readdirSync(componentsPath)
-      .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 
-    for (const file of componentsFiles) {
-      const filePath = path.join(componentsPath, file);
-      const component = (await import(filePath)).default;
+    const componentsPath = path.join(componentFoldersPath, folder);
+    for (const component of await loadDefaultExports(
+      componentsPath,
+      isComponentConfig,
+    )) {
       // Set a new item in the Collection with the key as the component name and the value as the exported module
-      if ("type" in component && "id" in component && "builder" in component) {
-        const componentTypeCollection: Collection<string, ComponentConfig> =
-          client.components.get(component.type) ??
-          new Collection<string, ComponentConfig>();
-        componentTypeCollection.set(component.id, component);
-        client.components.set(component.type, componentTypeCollection);
-      } else {
-        console.log(
-          `[WARNING] The component at ${filePath} is missing a required "type", "id", or "builder" property.`
-        );
-      }
+      const componentTypeCollection: Collection<string, ComponentConfig> =
+        client.components.get(component.type) ??
+        new Collection<string, ComponentConfig>();
+      componentTypeCollection.set(component.id, component);
+      client.components.set(component.type, componentTypeCollection);
     }
   }
 
   const eventsPath = path.join(__dirname, "events");
-  const eventFiles = fs
-    .readdirSync(eventsPath)
-    .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+  for (const event of await loadDefaultExports(eventsPath, isEventConfig)) {
+    // discord.js passes the arguments that match `event.name`.
+    // Typescript can't connect the two for an event loaded at runtime, so we cast.
+    type EventHandler = (
+      client: ClientExtended,
+      ...args: unknown[]
+    ) => Awaitable<void>;
+    const execute = event.execute as EventHandler;
 
-  for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event: EventConfig = (await import(filePath)).default;
+    const listener = async (...args: unknown[]) => {
+      try {
+        await execute(client, ...args);
+      } catch (error) {
+        console.error(`[event ${event.name}] Handler failed:`, error);
+      }
+    };
+
     if (event.once) {
-      client.once(event.name, (...args) => {
-        event.execute(client, ...args);
-      });
+      client.once(event.name, (...args) => void listener(...args));
     } else {
-      client.on(event.name, (...args) => {
-        event.execute(client, ...args);
-      });
+      client.on(event.name, (...args) => void listener(...args));
     }
   }
 }
 
-init().then(() => client.login(token));
+init()
+  .then(() => client.login(token))
+  .catch(console.error);

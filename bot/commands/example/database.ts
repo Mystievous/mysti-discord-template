@@ -12,25 +12,26 @@ export default makeSlashCommand({
         .setName("name")
         .setDescription("Name to write to the database.")
         .setMaxLength(45)
-        .setRequired(true)
+        .setRequired(true),
     ),
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     await interaction.deferReply();
     try {
-      const name = (interaction.options as any).getString("name", true);
+      const name = interaction.options.getString("name", true);
       const newEntry = await createEntry({ name });
       await interaction.editReply(
-        `"${newEntry.name}" (${newEntry.id}) inserted into the database.`
+        `"${newEntry.name}" (${newEntry.id}) inserted into the database.`,
       );
-    } catch (e: any) {
-      if (isAxiosError(e) && e.status === 409) {
+    } catch (e: unknown) {
+      // Expected error 409. If the name is taken, an error is thrown and we handle it here.
+      // Anything else gets re-thrown to go back to the command handler's catch.
+      if (isAxiosError(e) && e.response?.status === 409) {
         await interaction.editReply(
-          "An entry with that name already exists in the database."
+          "An entry with that name already exists in the database.",
         );
         return;
       }
-      console.error(e);
-      await interaction.editReply(`Error: ${e.message}`);
+      throw e;
     }
   },
 });

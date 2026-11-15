@@ -21,3 +21,9 @@ start:
 # Deploys bot commands
 deploy:
     npm run deploy-commands
+
+lint:
+    npm run lint
+
+typecheck:
+  npm run typecheck

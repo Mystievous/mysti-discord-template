@@ -13,18 +13,18 @@ export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("section")
     .setDescription(
-      "Example Command with a 'section' for the template repository."
+      "Example Command with a 'section' for the template repository.",
     ),
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     // Button Section
     const textComponent = new TextDisplayBuilder().setContent(
-      "## This is a section."
+      "## This is a section.",
     );
     const textComponent2 = new TextDisplayBuilder().setContent(
-      "It can have a maximum of 3 text components."
+      "It can have a maximum of 3 text components.",
     );
     const textComponent3 = new TextDisplayBuilder().setContent(
-      "And optionally a button or thumbnail 'accessory'."
+      "And optionally a button or thumbnail 'accessory'.",
     );
 
     const button = sectionButton.getBuilder();
@@ -35,10 +35,10 @@ export default makeSlashCommand({
 
     // Thumbnail Section
     const imageText = new TextDisplayBuilder().setContent(
-      "## This is a section with an image."
+      "## This is a section with an image.",
     );
     const imageText2 = new TextDisplayBuilder().setContent(
-      "And only 2 text components."
+      "And only 2 text components.",
     );
 
     const thumbnailComponent = new ThumbnailBuilder({

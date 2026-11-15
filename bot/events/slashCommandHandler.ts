@@ -1,39 +1,38 @@
-import { Events, Interaction, MessageFlags } from "discord.js";
+import { Events } from "discord.js";
 import { makeEvent } from "app/scripts/bot_structures/EventConfig";
-import { ClientExtended } from "scripts/ClientExtended";
 import type {
   SubcommandGroup,
   SubcommandsCommandConfig,
 } from "app/scripts/bot_structures/CommandConfig";
+import { universalRespond } from "app/scripts/universalRespond";
+import { UserMessages } from "app/scripts/messages";
 
 export default makeEvent({
   name: Events.InteractionCreate,
-  async execute(client: ClientExtended, interaction: Interaction) {
+  async execute(client, interaction) {
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.slashCommands.get(interaction.commandName);
 
     if (!command) {
       console.error(
-        `No command matching ${interaction.commandName} was found.`
+        `[command /${interaction.commandName}] No handler registered.`,
       );
-      interaction.reply({
-        content: "That command could not be found.",
-        flags: MessageFlags.Ephemeral,
-      });
+      await universalRespond(interaction, UserMessages.unavailable);
       return;
     }
 
-    if (command.type === "subcommand") {
-      try {
+    try {
+      if (command.type === "subcommand") {
         let commandToRun: SubcommandsCommandConfig | SubcommandGroup = command;
         const subcommandGroup = interaction.options.getSubcommandGroup(false);
         if (subcommandGroup) {
           const groupConfig = command.subcommands[subcommandGroup];
-          if (groupConfig.type !== "group") {
+          if (!groupConfig || groupConfig.type !== "group") {
             console.error(
-              `Subcommand group ${subcommandGroup} is not a group.`
+              `[command /${interaction.commandName}] Unknown subcommand group "${subcommandGroup}".`,
             );
+            await universalRespond(interaction, UserMessages.unavailable);
             return;
           }
           commandToRun = groupConfig;
@@ -42,29 +41,24 @@ export default makeEvent({
         const subcommand = interaction.options.getSubcommand(false);
         if (subcommand) {
           const subcommandConfig = commandToRun.subcommands[subcommand];
-          if (subcommandConfig.type !== "command") {
-            console.error(`Subcommand ${subcommand} is not a command.`);
+          if (!subcommandConfig || subcommandConfig.type !== "command") {
+            console.error(
+              `[command /${interaction.commandName}] Unknown subcommand "${subcommand}".`,
+            );
+            await universalRespond(interaction, UserMessages.unavailable);
             return;
           }
           await subcommandConfig.execute(client, interaction);
         }
-      } catch (error) {
-        console.error(error);
-        await interaction.reply({
-          content: "There was an error while executing this subcommand!",
-          flags: MessageFlags.Ephemeral,
-        });
-      }
-    } else {
-      try {
+      } else {
         await command.execute(client, interaction);
-      } catch (error) {
-        console.error(error);
-        await interaction.reply({
-          content: "There was an error while executing this command!",
-          flags: MessageFlags.Ephemeral,
-        });
       }
+    } catch (error) {
+      console.error(
+        `[command /${interaction.commandName}] Execution failed:`,
+        error,
+      );
+      await universalRespond(interaction, UserMessages.failed);
     }
   },
 });

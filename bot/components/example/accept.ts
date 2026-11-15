@@ -1,6 +1,4 @@
-import {
-  ButtonConfig,
-} from "app/scripts/bot_structures/ComponentConfig";
+import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
@@ -10,13 +8,11 @@ import {
 
 export default new ButtonConfig(
   "accept",
-  new ButtonBuilder()
-    .setLabel("Accept")
-    .setStyle(ButtonStyle.Primary),
-  async (client, interaction) => {
+  () => new ButtonBuilder().setLabel("Accept").setStyle(ButtonStyle.Primary),
+  async (_client, interaction) => {
     await interaction.reply({
       content: `Accepted, ${userMention(interaction.user.id)}`,
-      flags: MessageFlags.Ephemeral
+      flags: MessageFlags.Ephemeral,
     });
-  }
+  },
 );

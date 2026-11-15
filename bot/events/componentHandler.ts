@@ -1,11 +1,12 @@
-import { Events, Interaction } from "discord.js";
+import { Events } from "discord.js";
 import { makeEvent } from "app/scripts/bot_structures/EventConfig";
-import { ClientExtended } from "scripts/ClientExtended";
 import { separateData } from "app/scripts/bot_structures/ComponentConfig";
+import { universalRespond } from "app/scripts/universalRespond";
+import { UserMessages } from "app/scripts/messages";
 
 export default makeEvent({
   name: Events.InteractionCreate,
-  execute(client: ClientExtended, interaction: Interaction) {
+  async execute(client, interaction) {
     if (!interaction.isMessageComponent()) return;
 
     const type = interaction.componentType;
@@ -13,16 +14,18 @@ export default makeEvent({
     const component = client.components.get(type)?.get(identifier.id);
 
     if (component === undefined) {
-      console.error(`No component matching ${identifier} was found.`);
+      console.error(`[component ${identifier.id}] No handler registered.`);
+      await universalRespond(interaction, UserMessages.unavailable);
       return;
     }
 
     try {
       if (component.execute !== undefined) {
-        component.execute(client, interaction, identifier.data);
+        await component.execute(client, interaction, identifier.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error(`[component ${identifier.id}] Execution failed:`, error);
+      await universalRespond(interaction, UserMessages.failed);
     }
   },
 });

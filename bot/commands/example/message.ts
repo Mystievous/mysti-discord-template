@@ -5,7 +5,7 @@ export default makeSlashCommand({
   data: new SlashCommandBuilder()
     .setName("message")
     .setDescription("Example Command for the template repository."),
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     await interaction.reply(`Hello, ${userMention(interaction.user.id)}`);
   },
 });
