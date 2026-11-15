@@ -1,31 +1,38 @@
-{ pkgs, lib, config, inputs, ... }:
+{
+  pkgs,
+  ...
+}:
 
 {
   name = "discord-bot";
 
   # https://devenv.sh/packages/
-  packages = with pkgs; [ 
+  packages = with pkgs; [
     just
   ];
 
   # https://devenv.sh/languages/
-  languages.javascript = {
-    enable = true;
-    directory = "./bot";
-    npm = {
+  languages = {
+    javascript = {
       enable = true;
-      install.enable = true;
+      directory = "./bot";
+      package = pkgs.nodejs_26;
+      npm = {
+        enable = true;
+        install.enable = true;
+      };
     };
-  };
-  languages.typescript.enable = true;
+    typescript.enable = true;
 
-  languages.python = {
-    enable = true;
-    directory = "./api";
-    version = "3.14";
-    venv = {
+    python = {
       enable = true;
-      requirements = ./api/requirements.txt;
+      directory = "./api";
+      version = "3.14";
+      venv.enable = true;
+      uv = {
+        enable = true;
+        sync.enable = true;
+      };
     };
   };
 
