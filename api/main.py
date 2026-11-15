@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 import dotenv
@@ -7,6 +8,9 @@ from sqlalchemy.exc import IntegrityError
 
 from core.openapi import operation_id
 from core.router import router
+from db.errors import is_unique_violation
+
+logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv("envs/.env")
 
@@ -34,19 +38,26 @@ app.include_router(
 
 
 # SQLAlchemy Integrity Error Handler
-# Handles database integrity errors such as unique constraint violations
+# Fallback for database constraint violations that a route didn't handle itself.
+# Clients get a generic message, while the full error can be found in the logs.
 @app.exception_handler(IntegrityError)
 async def sql_integrity_error_handler(request: Request, exc: IntegrityError):
-    if "unique constraint" in str(exc).lower():
+    logger.warning(
+        "Integrity error on %s %s: %s", request.method, request.url.path, exc.orig
+    )
+
+    if is_unique_violation(exc):
         # Unique violation
-        status_code = status.HTTP_409_CONFLICT
-    else:
-        # Generic integrity error
-        # Could be foreign key violation, check constraint violation, etc.
-        # For simplicity, return 400 Bad Request for all other integrity errors
-        # as they usually indicate a client error
-        status_code = status.HTTP_400_BAD_REQUEST
-    return JSONResponse(status_code=status_code, content={"detail": str(exc)})
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"detail": "A record with these values already exists."},
+        )
+
+    # Foreign key, check constraint, NOT NULL, etc. Usually a client error.
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "The request violates a database constraint."},
+    )
 
 
 @app.get("/healthcheck")
