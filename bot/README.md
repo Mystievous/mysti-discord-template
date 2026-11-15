@@ -86,6 +86,42 @@ Note that you don't have to do any of that yourself, it is done automatically wh
 > [!WARNING]  
 > Discord component IDs have a max character limit of 100, so be cautious of getting too close to that!
 
+## Modals
+
+Unlike components, modals aren't registered ahead of time. They're built inline wherever you need one (in a command or component's `execute`), so any pre-filled values can come straight from the surrounding code. Then show it with `promptModal` from `./bot/scripts/promptModal.ts`, which waits for the user to submit it. There's a full example in `./bot/commands/example/modal.ts`.
+
+```ts
+const modal = new ModalBuilder()
+  .setTitle("Edit Message")
+  .addLabelComponents(
+    new LabelBuilder()
+      .setLabel("Message")
+      .setTextInputComponent(
+        new TextInputBuilder()
+          .setCustomId("text")
+          .setStyle(TextInputStyle.Paragraph)
+          .setValue(message.content), // pre-filled
+      ),
+  );
+
+const submit = await promptModal(interaction, modal);
+if (!submit) return; // the user closed it, or it timed out
+
+const text = submit.fields.getTextInputValue("text");
+await submit.reply({ content: "Saved!", flags: MessageFlags.Ephemeral });
+```
+
+- `promptModal` sets the modal's custom ID itself, and only accepts the submission from the same user and invocation, so multiple people can use it at once.
+- It returns `null` if the user closes the modal or doesn't submit in time (15 minutes by default). Discord doesn't tell the bot when a modal is closed, so this is the only way to know.
+- Reply to `submit` (the submitted modal), not the original `interaction`.
+- If the reply takes time (e.g. uploading `files`), `deferReply` on `submit` first, then `editReply`.
+
+> [!WARNING]  
+> Showing a modal must be the **first** response to an interaction, so don't `deferReply` or `reply` before calling `promptModal`.
+
+> [!NOTE]  
+> If the bot restarts while a modal is open, submitting it will show "This interaction failed".
+
 ## API Interaction
 
 API-related code lives in the `./bot/scripts/api` directory.
