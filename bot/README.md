@@ -27,6 +27,25 @@ Commands must be one of the `CommandConfig` types which have the following prope
 
 Besides `makeSlashCommand`, there's `makeSubcommandCommand` for commands with subcommands (see `./bot/commands/example/subcommand.ts`), and `makeMessageContextMenuCommand` / `makeUserContextMenuCommand` for right-click menu commands (see `./bot/commands/example/message-context-menu.ts`). The context menu makers set the command type themselves, so `interaction` is already typed as a message or user interaction.
 
+### Autocomplete
+
+String, number and integer options can suggest values as the user types. Mark the option with `.setAutocomplete(true)`, and add an `autocomplete` function to the command (or to the subcommand, for subcommand commands). There's an example in `./bot/commands/example/autocomplete.ts`.
+
+```ts
+async autocomplete(_client, interaction) {
+  const typed = interaction.options.getFocused();
+  const matches = names.filter((name) => name.includes(typed)).slice(0, 25);
+  await interaction.respond(matches.map((name) => ({ name, value: name })));
+},
+```
+
+- It must `respond()` within 3 seconds, and can't be deferred, so keep lookups fast.
+- Discord shows at most 25 suggestions.
+- If a command has more than one autocompleted option, `getFocused(true)` returns `{ name, value }`, so you can tell which option is being typed in.
+
+> [!WARNING]  
+> Suggestions aren't enforced: users can still submit any text, so validate the value in `execute`.
+
 Once configured and added to a subfolder of `./bot/commands/`, you must run `just bot deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
 
 ## Components (i.e. Buttons, Selects)

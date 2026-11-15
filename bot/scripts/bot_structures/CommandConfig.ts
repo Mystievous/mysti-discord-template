@@ -1,5 +1,6 @@
 import { ApplicationCommandType } from "discord.js";
 import type {
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
   MessageContextMenuCommandInteraction,
@@ -31,6 +32,11 @@ export interface ExecutableCommandConfig<
   execute: (client: ClientExtended, interaction: Interaction) => Promise<void>;
 }
 
+export type AutocompleteHandler = (
+  client: ClientExtended,
+  interaction: AutocompleteInteraction,
+) => Promise<void>;
+
 //
 // Slash Command Configuration
 //
@@ -40,6 +46,7 @@ export interface SlashCommandConfig extends ExecutableCommandConfig<
   ChatInputCommandInteraction
 > {
   type: "slash";
+  autocomplete?: AutocompleteHandler;
 }
 
 export function makeSlashCommand(
@@ -72,6 +79,7 @@ export interface SubcommandCommand extends SubcommandBase {
     client: ClientExtended,
     interaction: ChatInputCommandInteraction,
   ) => Promise<void>;
+  autocomplete?: AutocompleteHandler;
 }
 
 export interface SubcommandGroup extends SubcommandBase {
@@ -136,6 +144,21 @@ export function buildSubcommandData(command: SubcommandsCommandConfig) {
   }
 
   return subcommandData;
+}
+
+export function resolveSubcommand(
+  command: SubcommandsCommandConfig,
+  groupName: string | null,
+  subcommandName: string,
+): SubcommandCommand | undefined {
+  let parent: SubcommandsCommandConfig | SubcommandGroup = command;
+  if (groupName) {
+    const group = command.subcommands[groupName];
+    if (!group || group.type !== "group") return undefined;
+    parent = group;
+  }
+  const subcommand = parent.subcommands[subcommandName];
+  return subcommand?.type === "command" ? subcommand : undefined;
 }
 
 //
