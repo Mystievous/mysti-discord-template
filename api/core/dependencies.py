@@ -5,11 +5,18 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import APIKeyHeader
 from sqlalchemy import select
 
+from core.responses import ErrorResponse, Responses
 from db.connection import DatabaseDependency
 from db.tables import APIKey
 
 api_key_schema = APIKeyHeader(name="api-key", auto_error=False)
 ApiKeyValueDep = Annotated[str | None, Depends(api_key_schema)]
+
+API_KEY_RESPONSES: Responses = {
+    400: {"model": ErrorResponse, "description": "Invalid API key format."},
+    401: {"model": ErrorResponse, "description": "API key missing."},
+    403: {"model": ErrorResponse, "description": "Invalid API key."},
+}
 
 
 def api_key_auth(session: DatabaseDependency, api_key: ApiKeyValueDep) -> bool:
