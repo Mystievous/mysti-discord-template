@@ -2,7 +2,7 @@
 list:
     just --list
 
-# Installs pip requirements
+# Installs python dependencies
 install:
     uv sync
 
