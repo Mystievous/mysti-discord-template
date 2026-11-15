@@ -6,7 +6,6 @@ import {
   Collection,
   GatewayIntentBits,
 } from "discord.js";
-import dotenv from "dotenv";
 
 import { ClientExtended } from "scripts/ClientExtended";
 import { isEventConfig } from "app/scripts/bot_structures/EventConfig";
@@ -16,10 +15,6 @@ import {
 } from "app/scripts/bot_structures/ComponentConfig";
 import { isCommandConfig } from "./scripts/bot_structures/CommandConfig";
 import { loadDefaultExports } from "./scripts/loadDefaultExports";
-
-dotenv.config({
-  path: "./envs/.env",
-});
 
 const token = process.env.TOKEN;
 

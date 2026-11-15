@@ -5,21 +5,20 @@
   "author": "Mystievous",
   "license": "MIT",
   "scripts": {
-    "start": "tsx index.ts",
-    "dev": "tsx watch --clear-screen=false index.ts",
-    "deploy-commands": "tsx deploy-commands.ts",
+    "start": "tsx --env-file-if-exists=envs/.env index.ts",
+    "dev": "tsx watch --env-file-if-exists=envs/.env --clear-screen=false index.ts",
+    "deploy-commands": "tsx --env-file-if-exists=envs/.env deploy-commands.ts",
     "generate-api-client": "rm -rf scripts/api/generated && orval",
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "axios": "^1.13.2",
-    "discord.js": "^14.24.2",
-    "dotenv": "^17.2.3"
+    "discord.js": "^14.28.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
-    "orval": "^8.0.0-rc.1",
+    "orval": "^8.48.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2007",
     "tsx": "^4.23.15",
