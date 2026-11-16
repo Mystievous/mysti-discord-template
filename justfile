@@ -40,6 +40,7 @@ update:
 deploy:
     docker compose run --rm bot npm run deploy-commands
 
-# Generate an API key (the stack must be running)
+# Generate an API key
 generate-api-key *purpose="bot":
-    docker compose exec api python generate-api-key.py "{{ purpose }}"
+    docker compose run --rm --build api alembic upgrade head
+    docker compose run --rm api python generate-api-key.py "{{ purpose }}"
