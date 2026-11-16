@@ -20,6 +20,29 @@ The example command that uses this backend can be found under `./bot/commands/ex
 
 This repository is also set up fully with a [devenv](https://devenv.sh/) project definition, allowing for easily setting up the entire development environment without manually installing the packages globally.
 
+## Creating a Bot from This Template
+
+This template uses [Copier](https://copier.readthedocs.io/), so bots made from it can pull in later template updates.
+
+To create a new bot:
+
+```sh
+copier copy gh:Mystievous/mysti-discord-template my-bot
+cd my-bot
+git init && git add -A && git commit -m "Create bot from template"
+```
+
+To update a bot to the latest template version, run this in the bot's repo (it must be a git repo with no uncommitted changes):
+
+```sh
+copier update
+```
+
+- Only the template's changes are applied, so your own commands and edits are kept. If you changed the same lines as the template did, they're marked as git conflicts to resolve.
+- Example commands you deleted stay deleted, but new examples are still added.
+- Keep bot-specific code in `commands/`, `components/` and `areas/` where possible, so updates rarely conflict.
+- Don't edit `.copier-answers.yml`; it records which template version the bot was created from.
+
 ## Testing/Running the Bot
 
 The bot and API run in Docker, using `./compose.yml`.
