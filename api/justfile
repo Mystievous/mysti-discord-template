@@ -7,15 +7,17 @@ install:
     uv sync
 
 # =======
-# API
+# API (No docker)
 # =======
 
 # Starts the API in development mode
 dev:
+    alembic upgrade head
     fastapi dev
 
 # Starts the API
 start:
+    alembic upgrade head
     fastapi run
 
 # Generates the OpenAPI schema file
@@ -26,20 +28,24 @@ generate-openapi:
 
 # Generates an API key
 generate-api-key *purpose="bot":
+    alembic upgrade head
     python generate-api-key.py "{{ purpose }}"
 
 # =======
 # DATABASE MIGRATIONS
 # =======
 
-# Creates a new Alembic migration revision
+# Creates a new Alembic migration revision (diff against temporary database)
 revise *message:
-    alembic revision --autogenerate -m "{{ message }}"
+    rm -f revise.db
+    DATABASE_URI=sqlite:///revise.db alembic upgrade head
+    DATABASE_URI=sqlite:///revise.db alembic revision --autogenerate -m "{{ message }}"
+    rm -f revise.db
 
-# Applies Alembic migrations
+# Applies Alembic migrations in the Docker database (the stack must be running)
 migrate:
-    alembic upgrade head
+    docker compose exec api alembic upgrade head
 
 # Rolls back the last Alembic migration
 rollback:
-    alembic downgrade -1
+    docker compose exec api alembic downgrade -1

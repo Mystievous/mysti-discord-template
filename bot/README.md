@@ -46,7 +46,7 @@ async autocomplete(_client, interaction) {
 > [!WARNING]  
 > Suggestions aren't enforced: users can still submit any text, so validate the value in `execute`.
 
-Once configured and added to a subfolder of `./bot/commands/`, you must run `just bot deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
+Once configured and added to a subfolder of `./bot/commands/`, you must run `just deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
 
 ### User-Installable Commands
 
