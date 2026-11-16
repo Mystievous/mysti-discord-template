@@ -1,0 +1,5 @@
+# Local environments and data; config comes from compose at runtime
+.venv
+envs
+*.db
+__pycache__

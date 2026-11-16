@@ -13,14 +13,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "discord.js": "^14.28.1"
+    "discord.js": "^14.28.1",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "orval": "^8.48.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2007",
-    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }
