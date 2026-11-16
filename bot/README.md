@@ -48,6 +48,39 @@ async autocomplete(_client, interaction) {
 
 Once configured and added to a subfolder of `./bot/commands/`, you must run `just bot deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
 
+### User-Installable Commands
+
+Commands can also be installed to a user's account, so they can be used anywhere (DMs, or servers the bot isn't in). Set this on the command's builder:
+
+```ts
+new SlashCommandBuilder()
+  .setName("example")
+  .setDescription("Example command.")
+  .setIntegrationTypes(
+    ApplicationIntegrationType.GuildInstall,
+    ApplicationIntegrationType.UserInstall,
+  )
+  .setContexts(
+    InteractionContextType.Guild,
+    InteractionContextType.BotDM,
+    InteractionContextType.PrivateChannel,
+  );
+```
+
+- `setIntegrationTypes` is where the command can be installed (a server, a user's account, or both).
+- `setContexts` is where it can be used (servers, DMs with the bot, and other DMs/group DMs).
+- User-installable commands must also have `global: true`, since guild commands can't be installed to a user. `just bot deploy` warns if one isn't.
+- When used through a user install, the bot may not be in that server, so `interaction.guild` can be `null`. Check `interaction.inGuild()` before relying on it, and respond to the interaction instead of sending to the channel.
+
+User installs also need to be enabled for the app in the [Developer Portal](https://discord.com/developers/applications), on the **Installation** page:
+
+1. Under **Installation Contexts**, tick **User Install**. (Apps only allow guild installs by default.)
+2. Under **Default Install Settings**, give **User Install** the `applications.commands` scope.
+3. **Install Link** controls the "Add App" button on the bot's profile. Set it to **Discord Provided Link** to show it, or **None** to hide it.
+
+> [!NOTE]  
+> There's no built-in way to make user installs private. Turning off **Public Bot** only stops others from adding the bot to servers, and setting the install link to **None** only hides the button. Anyone with the install URL can still install it to their account.
+
 ## Components (i.e. Buttons, Selects)
 
 Components can be created in _a subfolder_ of the `./bot/components/` folder. There are example components already provided in `./bot/components/example/`, as well as a usage example in `./bot/commands/example/actionrow.ts`.

@@ -3,6 +3,7 @@ import {
   toCommandJSON,
 } from "app/scripts/bot_structures/CommandConfig";
 import {
+  ApplicationIntegrationType,
   REST,
   RESTPostAPIApplicationCommandsJSONBody,
   Routes,
@@ -49,6 +50,14 @@ async function deployCommands() {
       isCommandConfig,
     )) {
       const data = toCommandJSON(command);
+      if (
+        !command.global &&
+        data.integration_types?.includes(ApplicationIntegrationType.UserInstall)
+      ) {
+        console.warn(
+          `[deploy] /${data.name} is user-installable but not global. It will only be available in ${guildId}`,
+        );
+      }
       if (command.global) {
         globalCommands.push(data);
       } else {
