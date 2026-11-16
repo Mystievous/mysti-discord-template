@@ -1,0 +1,92 @@
+# Pull request checks. The API schema (api/openapi.json) and the bot's API
+# client (bot/scripts/api/generated) are committed, so these jobs regenerate
+# them and fail if the committed versions are out of date.
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API, openapi.json is current
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.8"
+
+      - name: Install
+        run: uv sync --frozen
+
+      # Importing main creates database engine, never connects
+      - name: Regenerate openapi.json
+        env:
+          DATABASE_URI: "sqlite://"
+        run: uv run --frozen python generate-openapi.py
+
+      - name: Check openapi.json is committed and current
+        run: |
+          # assigned on its own line, so a failing git status fails the step
+          STATUS=$(git status --porcelain -- openapi.json)
+          if [ -n "$STATUS" ]; then
+            echo "$STATUS"
+            git diff -- openapi.json
+            echo "::error file=api/openapi.json::stale or uncommitted; run 'just generate-api-client' and commit it"
+            exit 1
+          fi
+
+  bot:
+    name: Bot, API client, types, & lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bot
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "26"
+
+      - name: Install
+        run: npm ci
+
+      # Generated from the committed openapi.json, which the api job keeps current
+      - name: Regenerate API client
+        run: npm run generate-api-client
+
+      - name: Check API client is committed and current
+        run: |
+          # porcelain catches changed, new, and deleted files
+          STATUS=$(git status --porcelain -- scripts/api/generated)
+          if [ -n "$STATUS" ]; then
+            echo "$STATUS"
+            git diff -- scripts/api/generated
+            echo "::error file=bot/scripts/api/generated::stale or uncommitted; run 'just generate-api-client' and commit it"
+            exit 1
+          fi
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint

@@ -1,0 +1,57 @@
+services:
+  api:
+    build: ./api
+    # Forwards stop signals, so the container stops immediately
+    init: true
+    env_file:
+      - path: ./api/envs/.env
+        required: false
+    environment:
+      DATABASE_URI: sqlite:////data/database.db
+    volumes:
+      - api-data:/data
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthcheck')" ]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      start_interval: 1s
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./api
+          target: /app
+          ignore:
+            - .venv/
+            - envs/
+        - action: rebuild
+          path: ./api/pyproject.toml
+        - action: rebuild
+          path: ./api/uv.lock
+  bot:
+    build: ./bot
+    init: true
+    env_file:
+      - path: ./bot/envs/.env
+        required: false
+    environment:
+      API_URL: http://api:8000/
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./bot
+          target: /app
+          ignore:
+            - node_modules/
+            - envs/
+        - action: rebuild
+          path: ./bot/package.json
+        - action: rebuild
+          path: ./bot/package-lock.json
+volumes:
+  api-data:

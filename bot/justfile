@@ -10,6 +10,10 @@ install:
 generate-api-client:
     npm run generate-api-client
 
+# =======
+# BOT (No docker)
+# =======
+
 # Starts the bot in development mode
 dev:
     npm run dev < /dev/null
@@ -22,8 +26,12 @@ start:
 deploy:
     npm run deploy-commands
 
+# =======
+# CHECKS
+# =======
+
 lint:
     npm run lint
 
 typecheck:
-  npm run typecheck
+    npm run typecheck
