@@ -1,9 +1,6 @@
 import { Events } from "discord.js";
 import { makeEvent } from "app/scripts/bot_structures/EventConfig";
-import type {
-  SubcommandGroup,
-  SubcommandsCommandConfig,
-} from "app/scripts/bot_structures/CommandConfig";
+import { resolveSubcommand } from "app/scripts/bot_structures/CommandConfig";
 import { universalRespond } from "app/scripts/universalRespond";
 import { UserMessages } from "app/scripts/messages";
 
@@ -24,32 +21,19 @@ export default makeEvent({
 
     try {
       if (command.type === "subcommand") {
-        let commandToRun: SubcommandsCommandConfig | SubcommandGroup = command;
-        const subcommandGroup = interaction.options.getSubcommandGroup(false);
-        if (subcommandGroup) {
-          const groupConfig = command.subcommands[subcommandGroup];
-          if (!groupConfig || groupConfig.type !== "group") {
-            console.error(
-              `[command /${interaction.commandName}] Unknown subcommand group "${subcommandGroup}".`,
-            );
-            await universalRespond(interaction, UserMessages.unavailable);
-            return;
-          }
-          commandToRun = groupConfig;
+        const subcommand = resolveSubcommand(
+          command,
+          interaction.options.getSubcommandGroup(false),
+          interaction.options.getSubcommand(),
+        );
+        if (!subcommand) {
+          console.error(
+            `[command /${interaction.commandName}] Unknown subcommand.`,
+          );
+          await universalRespond(interaction, UserMessages.unavailable);
+          return;
         }
-
-        const subcommand = interaction.options.getSubcommand(false);
-        if (subcommand) {
-          const subcommandConfig = commandToRun.subcommands[subcommand];
-          if (!subcommandConfig || subcommandConfig.type !== "command") {
-            console.error(
-              `[command /${interaction.commandName}] Unknown subcommand "${subcommand}".`,
-            );
-            await universalRespond(interaction, UserMessages.unavailable);
-            return;
-          }
-          await subcommandConfig.execute(client, interaction);
-        }
+        await subcommand.execute(client, interaction);
       } else {
         await command.execute(client, interaction);
       }

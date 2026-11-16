@@ -1,16 +1,16 @@
-import { ButtonConfig } from "app/scripts/bot_structures/ComponentConfig";
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 import { ButtonBuilder, ButtonStyle, MessageFlags } from "discord.js";
 
-export default new ButtonConfig(
-  "button-with-data",
-  () =>
+export default makeButton({
+  id: "button-with-data",
+  createBuilder: () =>
     new ButtonBuilder()
       .setLabel("Click to show data!")
       .setStyle(ButtonStyle.Success),
-  async (_client, interaction, data) => {
+  async execute(_client, interaction, data) {
     await interaction.reply({
       content: `This button randomly generated: ${data}!`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});

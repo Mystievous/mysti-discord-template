@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, userMention } from "discord.js";
-import { makeSubcommand } from "app/scripts/bot_structures/CommandConfig";
+import { makeSubcommandCommand } from "app/scripts/bot_structures/CommandConfig";
 
-export default makeSubcommand({
+export default makeSubcommandCommand({
   data: new SlashCommandBuilder()
     .setName("subcommand")
     .setDescription("Example Command for the template repository."),

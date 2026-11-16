@@ -25,28 +25,83 @@ Commands must be one of the `CommandConfig` types which have the following prope
   - `client`: The current `ClientExtended` of the bot. This includes the normal information, along with the loaded commands and components.
   - `interaction`: The object describing the command usage. This will include the user's id in `interaction.user.id`.
 
+Besides `makeSlashCommand`, there's `makeSubcommandCommand` for commands with subcommands (see `./bot/commands/example/subcommand.ts`), and `makeMessageContextMenuCommand` / `makeUserContextMenuCommand` for right-click menu commands (see `./bot/commands/example/message-context-menu.ts`). The context menu makers set the command type themselves, so `interaction` is already typed as a message or user interaction.
+
+### Autocomplete
+
+String, number and integer options can suggest values as the user types. Mark the option with `.setAutocomplete(true)`, and add an `autocomplete` function to the command (or to the subcommand, for subcommand commands). There's an example in `./bot/commands/example/autocomplete.ts`.
+
+```ts
+async autocomplete(_client, interaction) {
+  const typed = interaction.options.getFocused();
+  const matches = names.filter((name) => name.includes(typed)).slice(0, 25);
+  await interaction.respond(matches.map((name) => ({ name, value: name })));
+},
+```
+
+- It must `respond()` within 3 seconds, and can't be deferred, so keep lookups fast.
+- Discord shows at most 25 suggestions.
+- If a command has more than one autocompleted option, `getFocused(true)` returns `{ name, value }`, so you can tell which option is being typed in.
+
+> [!WARNING]  
+> Suggestions aren't enforced: users can still submit any text, so validate the value in `execute`.
+
 Once configured and added to a subfolder of `./bot/commands/`, you must run `just bot deploy` to deploy the commands **(Non-global commands are only deployed to the server/guild that is defined in your `.env` through `GUILD_ID`)**.
+
+### User-Installable Commands
+
+Commands can also be installed to a user's account, so they can be used anywhere (DMs, or servers the bot isn't in). Set this on the command's builder:
+
+```ts
+new SlashCommandBuilder()
+  .setName("example")
+  .setDescription("Example command.")
+  .setIntegrationTypes(
+    ApplicationIntegrationType.GuildInstall,
+    ApplicationIntegrationType.UserInstall,
+  )
+  .setContexts(
+    InteractionContextType.Guild,
+    InteractionContextType.BotDM,
+    InteractionContextType.PrivateChannel,
+  );
+```
+
+- `setIntegrationTypes` is where the command can be installed (a server, a user's account, or both).
+- `setContexts` is where it can be used (servers, DMs with the bot, and other DMs/group DMs).
+- User-installable commands must also have `global: true`, since guild commands can't be installed to a user. `just bot deploy` warns if one isn't.
+- When used through a user install, the bot may not be in that server, so `interaction.guild` can be `null`. Check `interaction.inGuild()` before relying on it, and respond to the interaction instead of sending to the channel.
+
+User installs also need to be enabled for the app in the [Developer Portal](https://discord.com/developers/applications), on the **Installation** page:
+
+1. Under **Installation Contexts**, tick **User Install**. (Apps only allow guild installs by default.)
+2. Under **Default Install Settings**, give **User Install** the `applications.commands` scope.
+3. **Install Link** controls the "Add App" button on the bot's profile. Set it to **Discord Provided Link** to show it, or **None** to hide it.
+
+> [!NOTE]  
+> There's no built-in way to make user installs private. Turning off **Public Bot** only stops others from adding the bot to servers, and setting the install link to **None** only hides the button. Anyone with the install URL can still install it to their account.
 
 ## Components (i.e. Buttons, Selects)
 
 Components can be created in _a subfolder_ of the `./bot/components/` folder. There are example components already provided in `./bot/components/example/`, as well as a usage example in `./bot/commands/example/actionrow.ts`.
 
 ```ts
-export default new ButtonConfig(
-  "accept",
-  () => new ButtonBuilder().setLabel("Accept").setStyle(ButtonStyle.Primary),
-  async (_client, interaction) => {
+export default makeButton({
+  id: "accept",
+  createBuilder: () =>
+    new ButtonBuilder().setLabel("Accept").setStyle(ButtonStyle.Primary),
+  async execute(_client, interaction) {
     await interaction.reply({
       content: `Accepted, ${userMention(interaction.user.id)}`,
       flags: MessageFlags.Ephemeral,
     });
   },
-);
+});
 ```
 
-Components are different from commands in that they are classes that you must make a `new` instance of.
+Components are made with the `make*` function for their type: `makeButton`, `makeStringSelect`, `makeUserSelect`, `makeRoleSelect`, `makeChannelSelect` and `makeMentionableSelect`.
 
-The constructor parameters are as follows:
+The fields are as follows:
 
 - `id`: The unique ID of the component.
 - `createBuilder`: A function that returns the `ComponentBuilder` that describes the component. These will be the specific builder type of the component you are building. A fresh builder is created every time `getBuilder()` is called, so separate uses never overwrite each other.
@@ -82,6 +137,42 @@ Note that you don't have to do any of that yourself, it is done automatically wh
 
 > [!WARNING]  
 > Discord component IDs have a max character limit of 100, so be cautious of getting too close to that!
+
+## Modals
+
+Unlike components, modals aren't registered ahead of time. They're built inline wherever you need one (in a command or component's `execute`), so any pre-filled values can come straight from the surrounding code. Then show it with `promptModal` from `./bot/scripts/promptModal.ts`, which waits for the user to submit it. There's a full example in `./bot/commands/example/modal.ts`.
+
+```ts
+const modal = new ModalBuilder()
+  .setTitle("Edit Message")
+  .addLabelComponents(
+    new LabelBuilder()
+      .setLabel("Message")
+      .setTextInputComponent(
+        new TextInputBuilder()
+          .setCustomId("text")
+          .setStyle(TextInputStyle.Paragraph)
+          .setValue(message.content), // pre-filled
+      ),
+  );
+
+const submit = await promptModal(interaction, modal);
+if (!submit) return; // the user closed it, or it timed out
+
+const text = submit.fields.getTextInputValue("text");
+await submit.reply({ content: "Saved!", flags: MessageFlags.Ephemeral });
+```
+
+- `promptModal` sets the modal's custom ID itself, and only accepts the submission from the same user and invocation, so multiple people can use it at once.
+- It returns `null` if the user closes the modal or doesn't submit in time (15 minutes by default). Discord doesn't tell the bot when a modal is closed, so this is the only way to know.
+- Reply to `submit` (the submitted modal), not the original `interaction`.
+- If the reply takes time (e.g. uploading `files`), `deferReply` on `submit` first, then `editReply`.
+
+> [!WARNING]  
+> Showing a modal must be the **first** response to an interaction, so don't `deferReply` or `reply` before calling `promptModal`.
+
+> [!NOTE]  
+> If the bot restarts while a modal is open, submitting it will show "This interaction failed".
 
 ## API Interaction
 

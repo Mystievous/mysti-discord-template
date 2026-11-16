@@ -6,9 +6,15 @@ import { UserMessages } from "app/scripts/messages";
 export default makeEvent({
   name: Events.InteractionCreate,
   async execute(client, interaction) {
-    if (!interaction.isContextMenuCommand()) return;
+    if (
+      !interaction.isMessageContextMenuCommand() &&
+      !interaction.isUserContextMenuCommand()
+    )
+      return;
 
-    const command = client.contextMenuCommands.get(interaction.commandName);
+    const command = client.contextMenuCommands.get(
+      `${interaction.commandType}:${interaction.commandName}`,
+    );
 
     if (!command) {
       console.error(
