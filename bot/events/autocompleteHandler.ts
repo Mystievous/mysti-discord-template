@@ -13,7 +13,7 @@ export default makeEvent({
         ? resolveSubcommand(
             command,
             interaction.options.getSubcommandGroup(false),
-            interaction.options.getSubcommand(),
+            interaction.options.getSubcommand(false),
           )?.autocomplete
         : command?.autocomplete;
 

@@ -149,8 +149,9 @@ export function buildSubcommandData(command: SubcommandsCommandConfig) {
 export function resolveSubcommand(
   command: SubcommandsCommandConfig,
   groupName: string | null,
-  subcommandName: string,
+  subcommandName: string | null,
 ): SubcommandCommand | undefined {
+  if (!subcommandName) return undefined;
   let parent: SubcommandsCommandConfig | SubcommandGroup = command;
   if (groupName) {
     const group = command.subcommands[groupName];

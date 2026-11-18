@@ -1,7 +1,9 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
+
 from sqlalchemy import (
     DateTime,
+    MetaData,
     PrimaryKeyConstraint,
     String,
     UniqueConstraint,
@@ -12,14 +14,22 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class BaseTable(DeclarativeBase):
-    pass
+    metadata = MetaData(
+        naming_convention={
+            "pk": "%(table_name)s_pk",
+            "uq": "%(table_name)s_%(column_0_N_name)s_uq",
+            "ix": "%(table_name)s_%(column_0_N_name)s_idx",
+            "fk": "%(table_name)s_%(column_0_name)s_fkey",
+            "ck": "%(table_name)s_%(constraint_name)s_ck",
+        }
+    )
 
 
 class Entry(BaseTable):
     __tablename__ = "entries"
     __table_args__ = (
-        PrimaryKeyConstraint("id", name="entries_pk"),
-        UniqueConstraint("name", name="entries_name_uq"),
+        PrimaryKeyConstraint("id"),
+        UniqueConstraint("name"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -29,9 +39,9 @@ class Entry(BaseTable):
 class APIKey(BaseTable):
     __tablename__ = "api_keys"
     __table_args__ = (
-        PrimaryKeyConstraint("id", name="api_keys_pk"),
-        UniqueConstraint("key", name="api_keys_key_uq"),
-        UniqueConstraint("purpose", name="api_keys_purpose_uq"),
+        PrimaryKeyConstraint("id"),
+        UniqueConstraint("key"),
+        UniqueConstraint("purpose"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

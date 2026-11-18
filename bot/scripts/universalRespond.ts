@@ -5,7 +5,11 @@ export async function universalRespond(
   interaction: RepliableInteraction,
   message: string,
 ) {
-  if (interaction.replied) {
+  // deferUpdate() leaves ephemeral null, which means there's no reply to edit.
+  // This could change with discord.js updates.
+  const deferredUpdate = interaction.deferred && interaction.ephemeral === null;
+
+  if (interaction.replied || deferredUpdate) {
     await interaction.followUp({
       content: message,
       flags: MessageFlags.Ephemeral,

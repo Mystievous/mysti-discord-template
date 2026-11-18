@@ -19,7 +19,9 @@ export const apiFetch = async <T>(
   const isJson = response.headers
     .get("content-type")
     ?.includes("application/json");
-  const data: unknown = isJson ? await response.json() : await response.text();
+  const text = await response.text();
+  const data: unknown =
+    isJson && text.length > 0 ? JSON.parse(text) : text || undefined;
 
   // T is the generated per-status envelope type, this is the one place it's asserted
   return { data, status: response.status, headers: response.headers } as T;

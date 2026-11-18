@@ -2,6 +2,7 @@ import { Events } from "discord.js";
 import { makeEvent } from "app/scripts/bot_structures/EventConfig";
 import { universalRespond } from "app/scripts/universalRespond";
 import { UserMessages } from "app/scripts/messages";
+import { activeInteraction } from "app/scripts/activeInteraction";
 
 export default makeEvent({
   name: Events.InteractionCreate,
@@ -24,14 +25,17 @@ export default makeEvent({
       return;
     }
 
+    const context = { current: interaction };
     try {
-      await command.execute(client, interaction);
+      await activeInteraction.run(context, () =>
+        command.execute(client, interaction),
+      );
     } catch (error) {
       console.error(
         `[command /${interaction.commandName}] Execution failed:`,
         error,
       );
-      await universalRespond(interaction, UserMessages.failed);
+      await universalRespond(context.current, UserMessages.failed);
     }
   },
 });
