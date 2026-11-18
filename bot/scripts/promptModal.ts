@@ -7,6 +7,7 @@ import {
   ModalSubmitInteraction,
 } from "discord.js";
 import { addData } from "./bot_structures/ComponentConfig";
+import { activeInteraction } from "./activeInteraction";
 
 /**
  * Shows a modal and waits for the user to submit it.
@@ -31,11 +32,14 @@ export async function promptModal(
   await interaction.showModal(modal);
 
   try {
-    return await interaction.awaitModalSubmit({
+    const submit = await interaction.awaitModalSubmit({
       time: timeMs,
       filter: (submit) =>
         submit.customId === customId && submit.user.id === interaction.user.id,
     });
+    const store = activeInteraction.getStore();
+    if (store) store.current = submit;
+    return submit;
   } catch (error) {
     if (
       error instanceof DiscordjsError &&

@@ -3,6 +3,7 @@ import { makeEvent } from "app/scripts/bot_structures/EventConfig";
 import { separateData } from "app/scripts/bot_structures/ComponentConfig";
 import { universalRespond } from "app/scripts/universalRespond";
 import { UserMessages } from "app/scripts/messages";
+import { activeInteraction } from "app/scripts/activeInteraction";
 
 export default makeEvent({
   name: Events.InteractionCreate,
@@ -19,13 +20,14 @@ export default makeEvent({
       return;
     }
 
+    const context = { current: interaction };
     try {
-      if (component.execute !== undefined) {
-        await component.execute(client, interaction, identifier.data);
-      }
+      await activeInteraction.run(context, () =>
+        component.execute(client, interaction, identifier.data),
+      );
     } catch (error) {
       console.error(`[component ${identifier.id}] Execution failed:`, error);
-      await universalRespond(interaction, UserMessages.failed);
+      await universalRespond(context.current, UserMessages.failed);
     }
   },
 });
