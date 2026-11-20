@@ -1,1 +1,12 @@
 _min_copier_version: "9"
+
+_exclude:
+  - copier.yml
+  - copier.yaml
+  - "~*"
+  - "*.py[co]"
+  - __pycache__
+  - .git
+  - .DS_Store
+  - .svn
+  - .git-blame-ignore-revs
