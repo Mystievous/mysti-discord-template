@@ -1,4 +1,4 @@
-_min_copier_version: "9"
+_min_copier_version: "9.4"
 
 _exclude:
   - copier.yml
@@ -10,3 +10,5 @@ _exclude:
   - .DS_Store
   - .svn
   - .git-blame-ignore-revs
+  - "{% if _copier_operation == 'update' %}api/openapi.json{% endif %}"
+  - "{% if _copier_operation == 'update' %}bot/scripts/api/generated{% endif %}"
