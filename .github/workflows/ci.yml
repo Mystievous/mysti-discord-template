@@ -55,7 +55,7 @@ jobs:
           fi
 
   bot:
-    name: Bot, API client, types, & lint
+    name: Bot, API client, types, lint, & format
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -90,3 +90,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Format
+        run: npm run format:check
