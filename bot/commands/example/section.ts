@@ -1,4 +1,3 @@
-import sectionButton from "app/components/example/sectionButton";
 import {
   MessageFlags,
   SectionBuilder,
@@ -7,6 +6,8 @@ import {
   TextDisplayBuilder,
   ThumbnailBuilder,
 } from "discord.js";
+
+import sectionButton from "app/components/example/sectionButton";
 import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
 export default makeSlashCommand({

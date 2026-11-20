@@ -7,14 +7,14 @@ import {
   GatewayIntentBits,
 } from "discord.js";
 
-import { ClientExtended } from "scripts/ClientExtended";
-import { isEventConfig } from "app/scripts/bot_structures/EventConfig";
+import { isCommandConfig } from "app/scripts/bot_structures/CommandConfig";
 import {
   ComponentConfig,
   isComponentConfig,
 } from "app/scripts/bot_structures/ComponentConfig";
-import { isCommandConfig } from "./scripts/bot_structures/CommandConfig";
-import { loadDefaultExports } from "./scripts/loadDefaultExports";
+import { isEventConfig } from "app/scripts/bot_structures/EventConfig";
+import { ClientExtended } from "app/scripts/ClientExtended";
+import { loadDefaultExports } from "app/scripts/loadDefaultExports";
 
 const token = process.env.TOKEN;
 

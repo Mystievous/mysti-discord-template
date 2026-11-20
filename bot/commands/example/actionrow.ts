@@ -1,8 +1,3 @@
-import accept from "app/components/example/accept";
-import buttonWithData from "app/components/example/buttonWithData";
-import decline from "app/components/example/decline";
-import stringselect from "app/components/example/stringselect";
-import userselect from "app/components/example/userselect";
 import { randomUUID } from "crypto";
 import {
   ActionRowBuilder,
@@ -15,6 +10,12 @@ import {
   TextDisplayBuilder,
   UserSelectMenuBuilder,
 } from "discord.js";
+
+import accept from "app/components/example/accept";
+import buttonWithData from "app/components/example/buttonWithData";
+import decline from "app/components/example/decline";
+import stringselect from "app/components/example/stringselect";
+import userselect from "app/components/example/userselect";
 import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
 export default makeSlashCommand({

@@ -1,6 +1,5 @@
-import accept from "app/components/example/accept";
-import buttonWithData from "app/components/example/buttonWithData";
-import decline from "app/components/example/decline";
+import { randomUUID } from "crypto";
+import { Readable } from "stream";
 import {
   ActionRowBuilder,
   AttachmentBuilder,
@@ -14,9 +13,11 @@ import {
   SlashCommandBuilder,
   TextDisplayBuilder,
 } from "discord.js";
-import { Readable } from "stream";
+
+import accept from "app/components/example/accept";
+import buttonWithData from "app/components/example/buttonWithData";
+import decline from "app/components/example/decline";
 import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
-import { randomUUID } from "crypto";
 
 export default makeSlashCommand({
   data: new SlashCommandBuilder()

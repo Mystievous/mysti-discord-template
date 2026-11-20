@@ -1,6 +1,7 @@
+import { Events } from "discord.js";
+
 import { resolveSubcommand } from "app/scripts/bot_structures/CommandConfig";
 import { makeEvent } from "app/scripts/bot_structures/EventConfig";
-import { Events } from "discord.js";
 
 export default makeEvent({
   name: Events.InteractionCreate,

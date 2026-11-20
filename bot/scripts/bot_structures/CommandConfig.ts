@@ -10,7 +10,8 @@ import type {
   SlashCommandSubcommandsOnlyBuilder,
   UserContextMenuCommandInteraction,
 } from "discord.js";
-import type { ClientExtended } from "scripts/ClientExtended";
+
+import type { ClientExtended } from "app/scripts/ClientExtended";
 
 type CommandBuilder = { toJSON: () => unknown };
 const COMMAND_TYPES = ["slash", "subcommand", "context-menu"] as const;
@@ -167,8 +168,7 @@ export function resolveSubcommand(
 //
 
 type ContextMenuKind =
-  | ApplicationCommandType.Message
-  | ApplicationCommandType.User;
+  ApplicationCommandType.Message | ApplicationCommandType.User;
 
 type ContextMenuInteractionFor<K extends ContextMenuKind> =
   K extends ApplicationCommandType.Message
@@ -209,9 +209,7 @@ export const makeUserContextMenuCommand = contextMenuMaker(
 //
 
 export type AnyCommandConfig =
-  | SlashCommandConfig
-  | SubcommandsCommandConfig
-  | ContextMenuCommandConfig;
+  SlashCommandConfig | SubcommandsCommandConfig | ContextMenuCommandConfig;
 
 export function toCommandJSON(
   command: AnyCommandConfig,

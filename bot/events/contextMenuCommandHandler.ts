@@ -1,8 +1,9 @@
 import { Events } from "discord.js";
-import { makeEvent } from "app/scripts/bot_structures/EventConfig";
-import { universalRespond } from "app/scripts/universalRespond";
-import { UserMessages } from "app/scripts/messages";
+
 import { activeInteraction } from "app/scripts/activeInteraction";
+import { makeEvent } from "app/scripts/bot_structures/EventConfig";
+import { UserMessages } from "app/scripts/messages";
+import { universalRespond } from "app/scripts/universalRespond";
 
 export default makeEvent({
   name: Events.InteractionCreate,

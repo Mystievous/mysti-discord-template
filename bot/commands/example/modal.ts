@@ -1,5 +1,3 @@
-import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
-import { promptModal } from "app/scripts/promptModal";
 import {
   ContainerBuilder,
   FileUploadBuilder,
@@ -16,6 +14,9 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
+
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
+import { promptModal } from "app/scripts/promptModal";
 
 // Field custom IDs, shared by builders and submit handling below
 const FIELDS = {

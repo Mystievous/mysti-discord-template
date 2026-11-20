@@ -142,6 +142,7 @@ Note that you don't have to do any of that yourself, it is done automatically wh
 
 Unlike components, modals aren't registered ahead of time. They're built inline wherever you need one (in a command or component's `execute`), so any pre-filled values can come straight from the surrounding code. Then show it with `promptModal` from `./bot/scripts/promptModal.ts`, which waits for the user to submit it. There's a full example in `./bot/commands/example/modal.ts`.
 
+<!-- prettier-ignore -->
 ```ts
 const modal = new ModalBuilder()
   .setTitle("Edit Message")
@@ -204,8 +205,8 @@ They return the response `status` along with its `data`, instead of throwing on 
 An example of using the `createEntry` endpoint:
 
 ```ts
-import { createEntry } from "app/scripts/api/generated/endpoints/entries";
 import { UnexpectedResponseError } from "app/scripts/api/errors";
+import { createEntry } from "app/scripts/api/generated/endpoints/entries";
 
 const name = "Entry Name";
 

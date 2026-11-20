@@ -1,9 +1,10 @@
-import { makeStringSelect } from "app/scripts/bot_structures/ComponentConfig";
 import {
   MessageFlags,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js";
+
+import { makeStringSelect } from "app/scripts/bot_structures/ComponentConfig";
 
 export default makeStringSelect({
   id: "stringselect",

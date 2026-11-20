@@ -1,5 +1,6 @@
-import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 import { ButtonBuilder, ButtonStyle, MessageFlags } from "discord.js";
+
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 
 export default makeButton({
   id: "button-with-data",

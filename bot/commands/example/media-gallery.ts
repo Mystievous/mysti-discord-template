@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
   TextDisplayBuilder,
 } from "discord.js";
+
 import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
 export default makeSlashCommand({

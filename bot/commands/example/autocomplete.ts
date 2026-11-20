@@ -1,5 +1,6 @@
-import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 import { SlashCommandBuilder } from "discord.js";
+
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
 // Autocomplete options
 const FRUITS = [

@@ -15,7 +15,8 @@ import {
   UserSelectMenuBuilder,
   UserSelectMenuInteraction,
 } from "discord.js";
-import { ClientExtended } from "scripts/ClientExtended";
+
+import { ClientExtended } from "app/scripts/ClientExtended";
 
 export interface ComponentIdentifier {
   id: string;
