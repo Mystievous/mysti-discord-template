@@ -10,7 +10,7 @@ import type {
   SlashCommandSubcommandsOnlyBuilder,
   UserContextMenuCommandInteraction,
 } from "discord.js";
-import type { ClientExtended } from "scripts/ClientExtended";
+import type { ClientExtended } from "app/scripts/ClientExtended";
 
 type CommandBuilder = { toJSON: () => unknown };
 const COMMAND_TYPES = ["slash", "subcommand", "context-menu"] as const;

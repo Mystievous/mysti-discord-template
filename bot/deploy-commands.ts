@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 import fs from "fs";
 import path from "path";
-import { loadDefaultExports } from "./scripts/loadDefaultExports";
+import { loadDefaultExports } from "app/scripts/loadDefaultExports";
 
 type JSONBody = RESTPostAPIApplicationCommandsJSONBody;
 

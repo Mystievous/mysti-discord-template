@@ -6,8 +6,8 @@ import {
   ModalBuilder,
   ModalSubmitInteraction,
 } from "discord.js";
-import { addData } from "./bot_structures/ComponentConfig";
-import { activeInteraction } from "./activeInteraction";
+import { addData } from "app/scripts/bot_structures/ComponentConfig";
+import { activeInteraction } from "app/scripts/activeInteraction";
 
 /**
  * Shows a modal and waits for the user to submit it.
