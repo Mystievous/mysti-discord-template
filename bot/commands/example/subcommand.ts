@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, userMention } from "discord.js";
+
 import { makeSubcommandCommand } from "app/scripts/bot_structures/CommandConfig";
 
 export default makeSubcommandCommand({

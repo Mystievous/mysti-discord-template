@@ -1,15 +1,16 @@
-import {
-  isCommandConfig,
-  toCommandJSON,
-} from "app/scripts/bot_structures/CommandConfig";
+import fs from "fs";
+import path from "path";
 import {
   ApplicationIntegrationType,
   REST,
   RESTPostAPIApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
-import fs from "fs";
-import path from "path";
+
+import {
+  isCommandConfig,
+  toCommandJSON,
+} from "app/scripts/bot_structures/CommandConfig";
 import { loadDefaultExports } from "app/scripts/loadDefaultExports";
 
 type JSONBody = RESTPostAPIApplicationCommandsJSONBody;

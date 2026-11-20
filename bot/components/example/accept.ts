@@ -1,10 +1,11 @@
-import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 import {
   ButtonBuilder,
   ButtonStyle,
   MessageFlags,
   userMention,
 } from "discord.js";
+
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
 
 export default makeButton({
   id: "accept",

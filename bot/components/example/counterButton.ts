@@ -1,5 +1,4 @@
-import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
-import { createCoalescer } from "app/scripts/coalesce";
+import { setTimeout } from "node:timers/promises";
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -8,7 +7,9 @@ import {
   InteractionReplyOptions,
   Snowflake,
 } from "discord.js";
-import { setTimeout } from "node:timers/promises";
+
+import { makeButton } from "app/scripts/bot_structures/ComponentConfig";
+import { createCoalescer } from "app/scripts/coalesce";
 
 type Count = {
   clicks: number;

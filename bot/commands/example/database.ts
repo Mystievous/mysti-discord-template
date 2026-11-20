@@ -1,7 +1,8 @@
-import { createEntry } from "app/scripts/api/generated/endpoints/entries";
 import { SlashCommandBuilder } from "discord.js";
-import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
+
 import { UnexpectedResponseError } from "app/scripts/api/errors";
+import { createEntry } from "app/scripts/api/generated/endpoints/entries";
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
 
 export default makeSlashCommand({
   data: new SlashCommandBuilder()

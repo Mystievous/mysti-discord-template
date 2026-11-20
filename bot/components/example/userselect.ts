@@ -1,5 +1,6 @@
-import { makeUserSelect } from "app/scripts/bot_structures/ComponentConfig";
 import { MessageFlags, UserSelectMenuBuilder } from "discord.js";
+
+import { makeUserSelect } from "app/scripts/bot_structures/ComponentConfig";
 
 export default makeUserSelect({
   id: "userselect",

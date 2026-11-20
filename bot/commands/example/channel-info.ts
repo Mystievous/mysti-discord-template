@@ -1,5 +1,3 @@
-import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
-import { fetchChannelOrNull, InteractionWithGuild } from "app/scripts/utils";
 import {
   channelMention,
   ChannelType,
@@ -9,6 +7,9 @@ import {
   SlashCommandBuilder,
   Snowflake,
 } from "discord.js";
+
+import { makeSlashCommand } from "app/scripts/bot_structures/CommandConfig";
+import { fetchChannelOrNull, InteractionWithGuild } from "app/scripts/utils";
 
 // IDs normally would come from the database. We're using a channel option
 // to show off the command, but the channel ID can come from anywhere.
