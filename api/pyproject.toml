@@ -17,3 +17,6 @@ package = false
 
 [tool.fastapi]
 entrypoint = "main:app"
+
+[tool.ruff]
+src = ["."]
