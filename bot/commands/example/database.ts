@@ -21,7 +21,7 @@ export default makeSlashCommand({
     const response = await createEntry({ name });
 
     switch (response.status) {
-      case 200:
+      case 201:
         await interaction.editReply(
           `"${response.data.name}" (${response.data.id}) inserted into the database.`,
         );
