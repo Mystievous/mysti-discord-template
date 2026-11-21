@@ -34,9 +34,9 @@ const getHeaders = (...sources: (RequestInit['headers'] | Record<string, string 
   return Object.fromEntries(layers.reverse().flat()) as Extract<RequestInit['headers'], Record<string, unknown>>;
 };
 
-export type createEntryResponse200 = {
+export type createEntryResponse201 = {
   data: EntryPublic
-  status: 200
+  status: 201
 }
 
 export type createEntryResponse400 = {
@@ -64,7 +64,7 @@ export type createEntryResponse422 = {
   status: 422
 }
 
-export type createEntryResponseSuccess = (createEntryResponse200) & {
+export type createEntryResponseSuccess = (createEntryResponse201) & {
   headers: Headers;
 };
 export type createEntryResponseError = (createEntryResponse400 | createEntryResponse401 | createEntryResponse403 | createEntryResponse409 | createEntryResponse422) & {

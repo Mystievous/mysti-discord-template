@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from core.responses import CONFLICT
 from db.tables import Entry
@@ -19,6 +19,7 @@ router = APIRouter()
 @router.post(
     "/",
     response_model=EntryPublic,
+    status_code=status.HTTP_201_CREATED,
     summary="Create a new entry.",
     responses=CONFLICT,
 )
